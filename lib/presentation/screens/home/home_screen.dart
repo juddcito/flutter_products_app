@@ -48,7 +48,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
       itemCount: products.length,
       itemBuilder:(context, index) {
         final product = products[index];
-        print(product);
+
         return ListTile(
           title: Text( product.nombre ),
         );

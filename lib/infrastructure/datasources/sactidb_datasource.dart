@@ -24,6 +24,7 @@ class SactiDbDatasource extends ProductDatasource {
       (sactiProduct) => ProductMapper.sactiResponseToEntity(sactiProduct)
     ).toList();
 
+    print(products);
     return products;
   }
 
