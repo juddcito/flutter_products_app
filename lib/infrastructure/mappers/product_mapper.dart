@@ -12,6 +12,7 @@ class ProductMapper {
     response.marcaId,
     response.marca,
     response.categoriaId,
-    response.categoria
+    response.categoria,
+    response.imagen
   );
 }
