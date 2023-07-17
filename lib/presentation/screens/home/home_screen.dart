@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/products/products_providers.dart';
 
 class HomeScreen extends StatelessWidget {
-
   static const name = 'home-screen';
 
   const HomeScreen({super.key});
@@ -33,36 +32,31 @@ class _HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<_HomeView> {
-
   @override
   void initState() {
     super.initState();
 
-    ref.read( productsProvider.notifier ).loadNextPage();
-
+    // ref.read( productsProvider.notifier ).loadNextPage();
   }
 
 
   @override
   Widget build(BuildContext context) {
+    // final products = ref.watch( productsProvider );
 
     final products = ref.watch( productsProvider );
-
-    print('Productos: $products');
 
     return ListView.builder(
       itemCount: products.length,
       itemBuilder:(context, index) {
         final product = products[index];
 
-        return Card(
-          child: ListTile(
-            leading: Icon ( Icons.no_photography_outlined ),
-            title: Text( product.nombre ),
-          
-            
-          ),
+        return ListTile(
+          title: Text( product.nombre ),
         );
       });
   }
 }
+
+
+
