@@ -14,5 +14,10 @@ class ProductRepositoryImpl extends ProductsRepository {
   Future<List<Product>> getProducts({int pageIndex = 1}) {
     return datasource.getProducts(pageIndex: pageIndex);
   }
+  
+  @override
+  Future<Product> getProductById({int productId = 1}) {
+    return datasource.getProductById(productId: productId);
+  }
 
 }

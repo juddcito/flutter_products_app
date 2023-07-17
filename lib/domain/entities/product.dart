@@ -6,8 +6,7 @@ class Product {
   final String marca;
   final int categoriaId;
   final String categoria;
-  final String image;
 
   Product(this.id, this.nombre, this.precio, this.marcaId, this.marca,
-      this.categoriaId, this.categoria, this.image);
+      this.categoriaId, this.categoria);
 }

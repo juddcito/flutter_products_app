@@ -6,7 +6,6 @@ class ProductSactiDb {
   final String marca;
   final int categoriaId;
   final String categoria;
-  final String imagen;
 
   ProductSactiDb({
     required this.id,
@@ -16,7 +15,6 @@ class ProductSactiDb {
     required this.marca,
     required this.categoriaId,
     required this.categoria,
-    required this.imagen
   });
 
   factory ProductSactiDb.fromJson(Map<String, dynamic> json) => ProductSactiDb(
@@ -27,7 +25,6 @@ class ProductSactiDb {
         marca: json["marca"],
         categoriaId: json["categoriaId"],
         categoria: json["categoria"],
-        imagen: json["imagen"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -38,6 +35,5 @@ class ProductSactiDb {
         "marca": marca,
         "categoriaId": categoriaId,
         "categoria": categoria,
-        "imagen": imagen,
       };
 }

@@ -1,6 +1,6 @@
 
 
-import 'package:flutter_products_app/infrastructure/models/sactidb/product_sactidb.dart';
+import 'package:flutter_products_app/infrastructure/models/sactidb/products_sactidb.dart';
 
 class SactiDbResponse {
     final dynamic search;

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_products_app/domain/datasources/products_datasource.dart';
 import 'package:flutter_products_app/domain/entities/product.dart';
 import 'package:flutter_products_app/infrastructure/mappers/product_mapper.dart';
+import 'package:flutter_products_app/infrastructure/models/sactidb/product_details_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/sactidb_response.dart';
 
 class SactiDbDatasource extends ProductDatasource {
@@ -30,6 +31,20 @@ class SactiDbDatasource extends ProductDatasource {
 
     print(products[1].id);
     return products;
+  }
+  
+  @override
+  Future<Product> getProductById({int productId = 1}) async {
+    final response = await dio.get('/$productId');
+
+    if ( response.statusCode != 200 ) throw Exception('Producto con id: $productId no encontrado');
+
+    final productDetails = ProductDetails.fromJson(response.data);
+
+    final Product product = ProductMapper.productDetailsToEntity(productDetails);
+
+    return product;
+
   }
 
 }

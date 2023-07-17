@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_products_app/presentation/widgets/products/product_gridview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/products/products_providers.dart';
@@ -16,10 +17,17 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colors.primary,
-        leading: Icon( Icons.menu_outlined, color: Colors.white,),
-        title: Text ('Productos SACTI', style: TextStyle(color: Colors.white),),
+        leading: const Icon( Icons.menu_outlined, color: Colors.white,),
+        title: const Text ('Productos SACTI', style: TextStyle(color: Colors.white),),
       ),
-      body: _HomeView()
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: _HomeView(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon ( Icons.add_outlined )
+      ),
     );
   }
 }
@@ -36,24 +44,27 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   void initState() {
     super.initState();
 
-    // ref.read( productsProvider.notifier ).loadNextPage();
+    ref.read( productsProvider.notifier ).loadNextPage();
   }
 
 
   @override
   Widget build(BuildContext context) {
-    // final products = ref.watch( productsProvider );
 
     final products = ref.watch( productsProvider );
 
-    return ListView.builder(
+    if (products.isEmpty) return Center(child: CircularProgressIndicator());
+
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 10
+      ),
       itemCount: products.length,
       itemBuilder:(context, index) {
         final product = products[index];
-
-        return ListTile(
-          title: Text( product.nombre ),
-        );
+        return ProductItem(product: product);
       });
   }
 }
