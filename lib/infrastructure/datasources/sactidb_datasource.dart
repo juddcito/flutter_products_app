@@ -9,7 +9,7 @@ import 'package:flutter_products_app/infrastructure/models/sactidb/sactidb_respo
 class SactiDbDatasource extends ProductDatasource {
 
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:5001/api/productos',
+    baseUrl: 'http://192.168.0.128:5001/api/productos/',
   ));
 
   @override
