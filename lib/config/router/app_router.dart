@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-
     GoRoute(
       path: '/',
       name: HomeScreen.name,
@@ -16,7 +15,7 @@ final appRouter = GoRouter(
           path: 'product/:id',
           name: ProductDetailsScreen.name,
           builder: (context, state) {
-            final productId = state.pathParameters['id'] ?? 'no-id';
+            final productId = state.pathParameters['id'] ?? '1';
             return ProductDetailsScreen( productId: productId );
           },
         )

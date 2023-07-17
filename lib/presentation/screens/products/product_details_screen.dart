@@ -16,7 +16,7 @@ class ProductDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Detalles del producto'),
       ),
-      body: ProductDetailsScreen( productId: productId ),
+      body: Text('Id del producto: $productId'),
     );
   }
 }

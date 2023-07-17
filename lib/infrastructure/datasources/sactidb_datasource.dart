@@ -10,13 +10,13 @@ import 'package:flutter_products_app/infrastructure/models/sactidb/sactidb_respo
 class SactiDbDatasource extends ProductDatasource {
 
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:5001/api/productos/',
+    baseUrl: 'http://192.168.0.128:5001/api/productos',
   ));
 
   @override
   Future<List<Product>> getProducts({int pageIndex = 1}) async {
     
-    final response = await dio.get('',
+    final response = await dio.get('/',
     queryParameters: {
       'pageIndex': pageIndex
     });
@@ -34,6 +34,12 @@ class SactiDbDatasource extends ProductDatasource {
   }
   
   @override
+  Future<Product> getProductById({int productId = 1}) {
+    // TODO: implement getProductById
+    throw UnimplementedError();
+  }
+  
+  /*@override
   Future<Product> getProductById({int productId = 1}) async {
     final response = await dio.get('/$productId');
 
@@ -46,5 +52,6 @@ class SactiDbDatasource extends ProductDatasource {
     return product;
 
   }
+  */
 
 }
