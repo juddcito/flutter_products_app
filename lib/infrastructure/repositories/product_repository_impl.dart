@@ -12,7 +12,7 @@ class ProductRepositoryImpl extends ProductsRepository {
 
   @override
   Future<List<Product>> getProducts({int pageIndex = 1}) {
-    return this.datasource.getProducts(pageIndex: pageIndex);
+    return datasource.getProducts(pageIndex: pageIndex);
   }
 
 }

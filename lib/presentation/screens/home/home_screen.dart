@@ -11,10 +11,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon( Icons.production_quantity_limits_rounded ),
-        title: const Text ('Productos SACTI'),
+        backgroundColor: colors.primary,
+        leading: Icon( Icons.menu_outlined, color: Colors.white,),
+        title: Text ('Productos SACTI', style: TextStyle(color: Colors.white),),
       ),
       body: _HomeView()
     );
@@ -22,7 +26,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _HomeView extends ConsumerStatefulWidget {
-  const _HomeView({super.key});
+
 
   @override
   _HomeViewState createState() => _HomeViewState();
@@ -44,13 +48,20 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
     final products = ref.watch( productsProvider );
 
+    print('Productos: $products');
+
     return ListView.builder(
       itemCount: products.length,
       itemBuilder:(context, index) {
         final product = products[index];
 
-        return ListTile(
-          title: Text( product.nombre ),
+        return Card(
+          child: ListTile(
+            leading: Icon ( Icons.no_photography_outlined ),
+            title: Text( product.nombre ),
+          
+            
+          ),
         );
       });
   }
