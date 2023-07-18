@@ -34,9 +34,16 @@ class SactiDbDatasource extends ProductDatasource {
   }
   
   @override
-  Future<Product> getProductById({int productId = 1}) {
-    // TODO: implement getProductById
-    throw UnimplementedError();
+  Future<Product> getProductById( String productId ) async {
+
+    final response = await dio.get('/$productId');
+
+    if ( response.statusCode != 200 ) throw Exception( 'Producto con id: $productId no encontrado');
+
+    final productDetails = ProductDetails.fromJson( response.data );
+    final Product product = ProductMapper.productDetailsToEntity(productDetails);
+    return product;
+
   }
   
   /*@override

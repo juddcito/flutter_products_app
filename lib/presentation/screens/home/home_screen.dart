@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
 import 'package:flutter_products_app/presentation/widgets/products/product_gridview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../providers/products/products_providers.dart';
 
 class HomeScreen extends StatelessWidget {
   static const name = 'home-screen';
@@ -26,7 +25,7 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        child: Icon ( Icons.add_outlined )
+        child: const Icon( Icons.add )
       ),
     );
   }
@@ -53,7 +52,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
     final products = ref.watch( productsProvider );
 
-    if (products.isEmpty) return Center(child: CircularProgressIndicator());
+    if (products.isEmpty) return const Center(child: CircularProgressIndicator());
 
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
