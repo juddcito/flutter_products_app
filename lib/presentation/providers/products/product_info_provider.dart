@@ -8,18 +8,21 @@ import '../../../domain/entities/product.dart';
 
 final productInfoProvider = StateNotifierProvider<ProductMapNotifier, Map<String,Product>>((ref) {
   final productRepository = ref.watch( productRepositoryProvider );
-  return ProductMapNotifier(getProduct: productRepository.getProductById);
+  return ProductMapNotifier(getProduct: productRepository.getProductById, deleteProduct: productRepository.deleteProductById);
 });
 
 
 typedef GetProductCallback = Future<Product>Function( String productId );
+typedef DeleteProductCallback = Future<void>Function( String productId );
 
 class ProductMapNotifier extends StateNotifier<Map<String,Product>>{
 
   final GetProductCallback getProduct;
+  final DeleteProductCallback deleteProduct;
 
   ProductMapNotifier({
-    required this.getProduct
+    required this.getProduct,
+    required this.deleteProduct
   }): super({});
 
   Future<void> loadProduct( String productId ) async {
@@ -31,5 +34,16 @@ class ProductMapNotifier extends StateNotifier<Map<String,Product>>{
     state = { ...state, productId: product };
 
   }
+
+  
+    Future<void> deleteProductById( String productId ) async{
+
+    await deleteProduct( productId );
+
+    state = {...state};
+
+  }
+
+  
 
 }

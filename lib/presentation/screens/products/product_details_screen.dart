@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_products_app/presentation/providers/products/product_info_provider.dart';
+import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
+import 'package:flutter_products_app/presentation/providers/products/products_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -62,6 +64,10 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               },
             ),
             SpeedDialChild(
+              onTap: () {
+                ref.read( productsProvider.notifier );
+                
+              },
                 backgroundColor: Colors.red.shade100,
                 child: const Icon(Icons.delete),
                 label: 'Eliminar'),

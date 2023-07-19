@@ -6,5 +6,6 @@ abstract class ProductDatasource {
 
   Future<List<Product>>  getProducts({ int pageIndex = 1 }  );
   Future<Product> getProductById( String productId );
+  Future<bool> deleteProductById( String productId );
 
 }

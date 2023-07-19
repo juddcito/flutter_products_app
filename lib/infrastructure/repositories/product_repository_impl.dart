@@ -19,7 +19,10 @@ class ProductRepositoryImpl extends ProductsRepository {
   Future<Product> getProductById(String productId) {
     return datasource.getProductById(productId);
   }
-  
-  
 
+  @override
+  Future<bool> deleteProductById( String productId ){
+    return datasource.deleteProductById(productId);
+  }
+  
 }

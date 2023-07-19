@@ -45,7 +45,23 @@ class SactiDbDatasource extends ProductDatasource {
     return product;
 
   }
-  
+
+  @override
+  Future<bool> deleteProductById( String productId ) async {
+
+    final bool isDeleted = false;
+
+    try{
+      final response = await dio.delete('/$productId');
+      print('Respuesta exitosa: ${response.data}');
+      isDeleted == true;
+      return isDeleted;
+    } catch ( e ) {
+      print('Error durante la solicitud HTTP: $e');
+      return isDeleted;
+    }
+
+  }  
   /*@override
   Future<Product> getProductById({int productId = 1}) async {
     final response = await dio.get('/$productId');
