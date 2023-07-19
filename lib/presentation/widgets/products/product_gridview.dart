@@ -15,13 +15,13 @@ class ProductItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: (){
-        context.push('/product/${ product.id }');
+        context.go('/product/${ product.id }');
         
       },
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-            color: Colors.grey.shade300, borderRadius: BorderRadius.circular(15)),
+            color: Colors.grey.shade200, borderRadius: BorderRadius.circular(15)),
         child: Column(
           children: [
             const Icon(

@@ -2,7 +2,7 @@
 class ProductDetails {
     final int id;
     final String nombre;
-    final int precio;
+    final double precio;
     final DateTime fechaCreacion;
     final Categoria marca;
     final Categoria categoria;

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
 import 'package:flutter_products_app/presentation/widgets/products/product_gridview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
+
   static const name = 'home-screen';
 
   const HomeScreen({super.key});
@@ -24,7 +26,9 @@ class HomeScreen extends StatelessWidget {
         child: _HomeView(),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          context.go('/create');
+        },
         child: const Icon( Icons.add )
       ),
     );
@@ -60,7 +64,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
         crossAxisSpacing: 8,
         mainAxisSpacing: 10
       ),
-      itemCount: products.length,
+      itemCount: products.length-5,
       itemBuilder:(context, index) {
         final product = products[index];
         return ProductItem(product: product);
