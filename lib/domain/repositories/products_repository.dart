@@ -6,5 +6,4 @@ abstract class ProductsRepository {
   Future<Product> getProductById( String productId );
   Future<bool> deleteProductById( String productId );
 
-
 }

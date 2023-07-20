@@ -64,7 +64,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
         crossAxisSpacing: 8,
         mainAxisSpacing: 10
       ),
-      itemCount: products.length-5,
+      itemCount: products.length,
       itemBuilder:(context, index) {
         final product = products[index];
         return ProductItem(product: product);

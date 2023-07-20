@@ -1,16 +1,24 @@
 
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_products_app/domain/datasources/products_datasource.dart';
 import 'package:flutter_products_app/domain/entities/product.dart';
 import 'package:flutter_products_app/infrastructure/mappers/product_mapper.dart';
+import 'package:flutter_products_app/infrastructure/models/sactidb/categories_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/product_details_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/sactidb_response.dart';
+import 'package:flutter_products_app/domain/entities/category.dart';
 
 class SactiDbDatasource extends ProductDatasource {
 
   final dio = Dio(BaseOptions(
     baseUrl: 'http://192.168.0.128:120/api/productos',
+  ));
+
+  // Para consultar marcas y categorías
+  final dio2 = Dio(BaseOptions(
+    baseUrl: 'http://192.168.0.128:120/api',
   ));
 
   @override
@@ -23,13 +31,10 @@ class SactiDbDatasource extends ProductDatasource {
     
     final sactiDbResponse = SactiDbResponse.fromJson(response.data);
 
-    print('Dio: $dio');
-
     final List<Product> products = sactiDbResponse.registers.map(
       (sactiProduct) => ProductMapper.sactiResponseToEntity(sactiProduct)
     ).toList();
 
-    print(products[1].id);
     return products;
   }
   
@@ -49,18 +54,41 @@ class SactiDbDatasource extends ProductDatasource {
   @override
   Future<bool> deleteProductById( String productId ) async {
 
-    final bool isDeleted = false;
+    bool isDeleted = false;
 
     try{
       final response = await dio.delete('/$productId');
-      print('Respuesta exitosa: ${response.data}');
-      isDeleted == true;
+      print('Respuesta exitosa: ${response.statusCode}');
+      isDeleted = true;
       return isDeleted;
     } catch ( e ) {
       print('Error durante la solicitud HTTP: $e');
       return isDeleted;
     }
 
+  }
+  
+  @override
+  Future<List<Categoryy>> getCategories() async {
+    try {
+      final response = await dio2.get('/categorias');
+      List<dynamic> jsonData = response.data;
+      List<CategorySactiDb> categoriesDb = jsonData.map((item) =>
+       CategorySactiDb.fromJson(item)).toList();
+      List<Categoryy> categories = categoriesDb.map((dbItem) => Categoryy(dbItem.id, dbItem.nombre)).toList();
+      return categories;
+    } catch ( e ) {
+
+      print('Ocurrió un error: $e');
+      return [];
+
+    }
+  }
+  
+  @override
+  Future<List<String>> getMarcas() async {
+    // TODO: implement getMarcas
+    throw UnimplementedError();
   }  
   /*@override
   Future<Product> getProductById({int productId = 1}) async {
