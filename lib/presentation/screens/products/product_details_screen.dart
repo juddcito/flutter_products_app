@@ -40,7 +40,9 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final Product? product = ref.watch( productInfoProvider )[widget.productId]; 
+    final Product? product = ref.watch( productInfoProvider )[widget.productId];
+
+    // TODO Implementar providers para el nombre y precio del producto para el POST
 
     final colors = Theme.of(context).colorScheme;
 

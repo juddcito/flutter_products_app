@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_products_app/domain/entities/product.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
 import 'package:flutter_products_app/presentation/widgets/products/product_gridview.dart';
+import 'package:flutter_products_app/presentation/widgets/shared/side_menu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,11 +18,8 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
         backgroundColor: colors.primary,
-        leading: const Icon(
-          Icons.menu_outlined,
-          color: Colors.white,
-        ),
         title: const Text(
           'Productos SACTI',
           style: TextStyle(color: Colors.white),
@@ -36,7 +34,9 @@ class HomeScreen extends StatelessWidget {
           onPressed: () {
             context.go('/create');
           },
-          child: const Icon(Icons.add)),
+          child: const Icon(Icons.add)
+      ),
+      drawer: const SideMenu()
     );
   }
 }
