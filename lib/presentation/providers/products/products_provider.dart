@@ -45,8 +45,7 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
   Future<void> loadNextPage() async {
     currentPage++;
 
-    final List<Product> products =
-        await fetchMoreProducts(pageIndex: currentPage);
+    final List<Product> products = await fetchMoreProducts(pageIndex: currentPage);
     state = [...state, ...products];
   }
 
