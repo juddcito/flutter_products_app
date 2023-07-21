@@ -26,6 +26,7 @@ class HomeScreen extends StatelessWidget {
         child: _HomeView(),
       ),
       floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
         onPressed: () {
           context.go('/create');
         },

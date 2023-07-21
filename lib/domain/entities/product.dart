@@ -9,4 +9,16 @@ class Product {
 
   Product(this.id, this.nombre, this.precio, this.marcaId, this.marca,
       this.categoriaId, this.categoria);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'nombre': nombre,
+      'precio': precio,
+      'marcaId': marcaId,
+      'marca': marca,
+      'categoriaId': categoria,
+      'categoria': categoria
+    };
+  }
 }

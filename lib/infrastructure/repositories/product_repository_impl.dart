@@ -25,4 +25,14 @@ class ProductRepositoryImpl extends ProductsRepository {
     return datasource.deleteProductById(productId);
   }
   
+  @override
+  Future<void> updateProduct(Product product) {
+    return datasource.updateProduct(product);
+  }
+
+  @override
+  Future<void> postProduct(Map<String,dynamic> product) {
+    return datasource.postProduct(product);
+  }
+  
 }

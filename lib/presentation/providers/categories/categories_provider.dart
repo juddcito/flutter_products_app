@@ -31,6 +31,7 @@ class CategoriesNotifier extends StateNotifier<List<Categoryy>> {
     state = [...state, ...categories];
 
   }
-
-  
 }
+
+final selectedIdCategoriaProvider = StateProvider<int>((ref) => 0);
+final selectedCategoriaProvider = StateProvider<String>((ref) => '');

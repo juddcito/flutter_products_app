@@ -1,5 +1,4 @@
 import 'package:flutter_products_app/presentation/screens/home/home_screen.dart';
-import 'package:flutter_products_app/presentation/screens/products/otra_screen.dart';
 import 'package:flutter_products_app/presentation/screens/products/product_create_screen.dart';
 import 'package:flutter_products_app/presentation/screens/products/product_details_screen.dart';
 import 'package:go_router/go_router.dart';
