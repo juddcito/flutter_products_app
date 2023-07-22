@@ -2,7 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_products_app/domain/entities/product.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
-import 'package:flutter_products_app/presentation/widgets/products/product_gridview.dart';
+import 'package:flutter_products_app/presentation/widgets/products/product_item.dart';
 import 'package:flutter_products_app/presentation/widgets/shared/side_menu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -59,6 +59,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
+
     final products = ref.watch(productsProvider);
 
     if (products.isEmpty) {
@@ -115,7 +116,9 @@ class _ProductsSlideshowState extends State<ProductsSlideshow> {
         itemCount: widget.products.length,
         itemBuilder: (context, index) {
           final product = widget.products[index];
-          return FadeIn(child: ProductItem(product: product));
+          return FadeInLeft(
+            child: ProductItem(product: product),
+          );
         });
   }
 }

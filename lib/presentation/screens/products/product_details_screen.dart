@@ -15,8 +15,8 @@ import '../../../domain/entities/marca.dart';
 import '../../../domain/entities/product.dart';
 import '../../widgets/widgets.dart';
 
-class ProductDetailsScreen extends ConsumerStatefulWidget {
 
+class ProductDetailsScreen extends ConsumerStatefulWidget {
   static const name = 'product_details_screen';
 
   final String productId;
@@ -28,38 +28,42 @@ class ProductDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
-
   @override
   void initState() {
     super.initState();
-    ref.read( productInfoProvider.notifier ).loadProduct( widget.productId );
-    ref.read( categoriesProvider.notifier ).loadCategories();
-    ref.read( marcasProvider.notifier ).loadMarcas();
+    ref.read(productInfoProvider.notifier).loadProduct(widget.productId);
+    ref.read(categoriesProvider.notifier).loadCategories();
+    ref.read(marcasProvider.notifier).loadMarcas();
+
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final Product? product = ref.watch( productInfoProvider )[widget.productId];
+    final colors = Theme.of(context).colorScheme;
+    final Product? product = ref.watch(productInfoProvider)[widget.productId];
 
     // TODO Implementar providers para el nombre y precio del producto para el POST
+    final String productName = ref.watch(productNameProvider);
+    final double productPrice = ref.watch(productPriceProvider);
 
-    final colors = Theme.of(context).colorScheme;
+    final categories = ref.watch(categoriesProvider);
+    final marcas = ref.watch(marcasProvider);
 
-    
-    final categories = ref.watch( categoriesProvider );
-    final marcas = ref.watch( marcasProvider );
+    final String selectedCategory = ref.watch(selectedCategoriaProvider);
+    final int selectedIdCategory = ref.watch(selectedIdCategoriaProvider);
+    final String selectedMarca = ref.watch(selectedMarcaProvider);
+    final int selectedIdMarca = ref.watch(selectedIdMarcaProvider);
 
-    final String selectedCategory = ref.watch( selectedCategoriaProvider);
-    final int selectedIdCategory = ref.watch( selectedIdCategoriaProvider );
-    final String selectedMarca = ref.watch( selectedMarcaProvider );
-    final int selectedIdMarca = ref.watch( selectedIdMarcaProvider );
-
-
-    if( product == null ) {
-      return Scaffold(appBar: AppBar( backgroundColor: colors.primary, foregroundColor: Colors.white, title: const Text('Detalles del producto'),),body: const Center(child: CircularProgressIndicator()));
+    if (product == null) {
+      return Scaffold(
+          appBar: AppBar(
+            backgroundColor: colors.primary,
+            foregroundColor: Colors.white,
+            title: const Text('Detalles del producto'),
+          ),
+          body: const Center(child: CircularProgressIndicator()));
     }
-    
+
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
@@ -68,7 +72,8 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           backgroundColor: colors.primary,
           foregroundColor: Colors.white,
         ),
-        body: _ProductDetailsView(product: product, categories: categories, marcas: marcas),
+        body: _ProductDetailsView(
+            product: product, categories: categories, marcas: marcas),
         floatingActionButton: SpeedDial(
           overlayOpacity: 0.8,
           spacing: 15,
@@ -80,34 +85,31 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               child: const Icon(Icons.save),
               label: 'Guardar',
               onTap: () async {
-
                 Product updatedProduct = Product(
                   product.id,
-                  product.nombre,
-                  product.precio,
+                  productName,
+                  productPrice,
                   selectedIdMarca,
                   selectedMarca,
                   selectedIdCategory,
                   selectedCategory,
                 );
+                
+                ref.read(productsProvider.notifier).updateProduct(updatedProduct);
 
-                print('Selected IDMarca: $selectedIdMarca y SelectedMarca: $selectedMarca');
-                ref.watch( productsProvider.notifier ).updateProduct(updatedProduct);
-             
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Producto guardado correctamente.')));
               },
             ),
             SpeedDialChild(
-              onTap: () async {
-                
-                final isDeleted = await ref.watch( productsProvider.notifier ).deleteProductById(widget.productId);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Producto eliminado correctamente.')
-                ),
-              );
-              context.pop();
-              },
+                onTap: () async {
+                  final isDeleted = await ref.read(productsProvider.notifier).deleteProductById(widget.productId);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Producto eliminado correctamente.')),
+                  );
+                  context.pop();
+                },
                 backgroundColor: Colors.red.shade100,
                 child: const Icon(Icons.delete),
                 label: 'Eliminar'),
@@ -117,27 +119,43 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 }
 
 class _ProductDetailsView extends ConsumerStatefulWidget {
-
   final Product product;
   final List<Categoryy> categories;
   final List<Marca> marcas;
 
-  const _ProductDetailsView({required this.product, required this.categories, required this.marcas});
+  const _ProductDetailsView(
+      {required this.product, required this.categories, required this.marcas});
 
   @override
-  _ProductDetailsViewState createState() => _ProductDetailsViewState(
-
-  );
-
+  _ProductDetailsViewState createState() => _ProductDetailsViewState();
 }
 
 class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
-
   @override
   void initState() {
     super.initState();
+
     nombreController.text = widget.product.nombre;
     precioController.text = widget.product.precio.toString();
+
+    nombreController.addListener(() {
+      String? name;
+      try {
+        name = nombreController.text;
+      } catch (e) {
+        name = '';
+      }
+      ref.read(productNameProvider.notifier).state = name;
+    });
+    precioController.addListener(() {
+      double? price;
+      try {
+        price = double.parse(precioController.text);
+      } catch (e) {
+        price = 0;
+      }
+      ref.read(productPriceProvider.notifier).state = price;
+    });
   }
 
   final nombreController = TextEditingController();
@@ -145,8 +163,7 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-
-     return Column(
+    return Column(
       children: [
         Expanded(
           child: ListView(
@@ -174,11 +191,15 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
               const SizedBox(
                 height: 32,
               ),
-              MarcasDropdown(marcas: widget.marcas, marcaId: widget.product.marcaId.toString()),
+              MarcasDropdown(
+                  marcas: widget.marcas,
+                  marcaId: widget.product.marcaId.toString()),
               const SizedBox(
                 height: 32,
               ),
-              CategoriesDropdown(categories: widget.categories, categoryId: widget.product.categoriaId.toString()),
+              CategoriesDropdown(
+                  categories: widget.categories,
+                  categoryId: widget.product.categoriaId.toString()),
               const SizedBox(
                 height: 32,
               ),
@@ -187,17 +208,13 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
                 decoration: const InputDecoration(
                     labelText: 'Precio',
                     prefixIcon: Icon(Icons.attach_money),
-                    border: OutlineInputBorder()
-                ),
+                    border: OutlineInputBorder()),
                 keyboardType: const TextInputType.numberWithOptions(),
               ),
             ],
-          ),  
+          ),
         ),
       ],
     );
   }
 }
-
-
-

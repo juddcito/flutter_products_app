@@ -4,6 +4,7 @@ import 'package:flutter_products_app/domain/entities/product.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/product_details_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/products_sactidb.dart';
 class ProductMapper {
+  
   static Product sactiResponseToEntity(ProductSactiDb response) => Product(
     response.id,
     response.nombre, 

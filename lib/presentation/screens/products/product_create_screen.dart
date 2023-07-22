@@ -77,6 +77,12 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
         onPressed: () {
           final product = buildProduct();
           ref.read( productsProvider.notifier ).postProductByProduct(product);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Producto creado exitosamente.')
+            )
+          );
+
 
         },
         child: const Icon( Icons.save_as_sharp ),

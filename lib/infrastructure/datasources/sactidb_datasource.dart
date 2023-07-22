@@ -24,8 +24,8 @@ class SactiDbDatasource extends ProductDatasource {
 
   @override
   Future<List<Product>> getProducts({int pageIndex = 1}) async {
-    final response =
-        await dio.get('/', queryParameters: {'pageIndex': pageIndex});
+
+    final response = await dio.get('/', queryParameters: {'pageIndex': pageIndex});
 
     final sactiDbResponse = SactiDbResponse.fromJson(response.data);
 
@@ -35,6 +35,7 @@ class SactiDbDatasource extends ProductDatasource {
         .toList();
 
     return products;
+
   }
 
   @override
@@ -131,7 +132,7 @@ class SactiDbDatasource extends ProductDatasource {
         'categoriaId': product['categoriaId']
       });
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         print('Petición POST exitosa: ${response.data}');
       } else {
         print('Error en la petición POST: ${response.statusCode}');

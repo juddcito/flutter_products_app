@@ -1,4 +1,4 @@
 export 'shared/custom_appbar.dart';
 export 'shared/custom_bottom_navigation.dart';
-export 'products/product_gridview.dart';
+export 'products/product_item.dart';
 export 'categories/categories_dropdown.dart';

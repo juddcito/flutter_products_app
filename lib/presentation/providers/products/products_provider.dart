@@ -1,6 +1,3 @@
-
-import 'dart:ffi';
-
 import 'package:flutter_products_app/domain/repositories/products_repository.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -72,7 +69,7 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
   Future<void> updateProductByProduct( Product product ) async {
 
     await updateProduct(product);
-    state = [...state];
+    state = state.map((p) => p.id == product.id ? p: product).toList();
 
   }
 

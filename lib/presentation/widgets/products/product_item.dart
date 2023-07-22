@@ -16,7 +16,6 @@ class ProductItem extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         context.go('/product/${ product.id }');
-        
       },
       child: Container(
         padding: const EdgeInsets.all(8),

@@ -22,6 +22,7 @@ class ProductMapNotifier extends StateNotifier<Map<String,Product>>{
   }): super({});
 
   Future<void> loadProduct( String productId ) async {
+    
     if( state[productId] != null ) return;
     print('realizando petición http');
 
@@ -30,6 +31,5 @@ class ProductMapNotifier extends StateNotifier<Map<String,Product>>{
     state = { ...state, productId: product };
 
   }
-
 
 }
