@@ -5,7 +5,6 @@ import 'package:flutter_products_app/presentation/providers/products/products_re
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/entities/product.dart';
-
 final productInfoProvider = StateNotifierProvider<ProductMapNotifier, Map<String,Product>>((ref) {
   final productRepository = ref.watch( productRepositoryProvider );
   return ProductMapNotifier(getProduct: productRepository.getProductById);

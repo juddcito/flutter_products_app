@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
+
   static const name = 'home-screen';
 
   const HomeScreen({super.key});
@@ -15,8 +16,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: colors.primary,
@@ -36,7 +39,7 @@ class HomeScreen extends StatelessWidget {
           },
           child: const Icon(Icons.add)
       ),
-      drawer: const SideMenu()
+      drawer: SideMenu(scaffoldKey: scaffoldKey)
     );
   }
 }
@@ -58,14 +61,13 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   Widget build(BuildContext context) {
     final products = ref.watch(productsProvider);
 
-    if (products.isEmpty)
+    if (products.isEmpty) {
       return const Center(child: CircularProgressIndicator());
+    }
 
     return ProductsSlideshow(
       products: products,
-      loadMoreProducts: () {
-        ref.read(productsProvider.notifier).loadNextPage();
-      },
+      loadMoreProducts: () => ref.read(productsProvider.notifier).loadNextPage()
     );
   }
 }
@@ -92,8 +94,7 @@ class _ProductsSlideshowState extends State<ProductsSlideshow> {
     scrollController.addListener(() {
       if (widget.loadMoreProducts == null) return;
 
-      if (scrollController.position.pixels + 200 >=
-          scrollController.position.maxScrollExtent) {
+      if (scrollController.position.pixels + 200 >= scrollController.position.maxScrollExtent) {
         widget.loadMoreProducts!();
       }
     });

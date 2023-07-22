@@ -122,15 +122,11 @@ class SactiDbDatasource extends ProductDatasource {
   @override
   Future<void> postProduct(Map<String,dynamic> product) async {
 
-    DateTime currentDate = DateTime.now();
-    String formattedDate = currentDate.toLocal().toString().split(' ')[0];
-    print('Fecha fomramteada $formattedDate');
-    
     try {
-      final response = await dio.post('', data: {
+      final response = await dio.post('', data: 
+      {
         'nombre': product['nombre'],
         'precio': product['precio'],
-        'fechaCreacion': formattedDate,
         'marcaId': product['marcaId'],
         'categoriaId': product['categoriaId']
       });
@@ -138,7 +134,7 @@ class SactiDbDatasource extends ProductDatasource {
       if (response.statusCode == 200) {
         print('Petición POST exitosa: ${response.data}');
       } else {
-        print('Error en la petición POST: {$response.statusCode}');
+        print('Error en la petición POST: ${response.statusCode}');
       }
     } catch (e) {
       print('Error $e');

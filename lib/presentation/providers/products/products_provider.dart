@@ -20,7 +20,7 @@ final productsProvider =
     deleteProduct: deleteProductById,
     productsRepository,
     updateProduct: updateProduct,
-    postProduct: postProduct
+    postProduct: postProduct,
   );
 });
 
@@ -37,16 +37,23 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
   final ProductsRepository productosRepository;
   final UpdateProductCallback updateProduct;
   final PostProductCallback postProduct;
+  bool isLoading = false;
 
   ProductsNotifier(this.productosRepository, 
       {required this.fetchMoreProducts, required this.deleteProduct, required this.updateProduct, required this.postProduct})
       : super([]);
 
   Future<void> loadNextPage() async {
-    currentPage++;
+    if( isLoading ) return;
 
+    isLoading = true;
+    print('Loading products');
+    currentPage++;
     final List<Product> products = await fetchMoreProducts(pageIndex: currentPage);
     state = [...state, ...products];
+    await Future.delayed(const Duration( milliseconds: 800 ));
+
+    isLoading = false;
   }
 
   Future<bool> deleteProductById(String productId) async {

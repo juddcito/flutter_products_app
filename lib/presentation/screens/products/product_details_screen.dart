@@ -92,9 +92,8 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 );
 
                 print('Selected IDMarca: $selectedIdMarca y SelectedMarca: $selectedMarca');
-
                 ref.watch( productsProvider.notifier ).updateProduct(updatedProduct);
-                
+             
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Producto guardado correctamente.')));
               },
@@ -107,9 +106,7 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     content: Text('Producto eliminado correctamente.')
                 ),
               );
-
               context.pop();
-                
               },
                 backgroundColor: Colors.red.shade100,
                 child: const Icon(Icons.delete),
@@ -133,7 +130,6 @@ class _ProductDetailsView extends ConsumerStatefulWidget {
   );
 
 }
-
 
 class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
 
