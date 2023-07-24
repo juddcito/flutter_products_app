@@ -43,7 +43,7 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
   @override
   Map<String,dynamic> buildProduct() {
 
-    final int selectedIdCategory = ref.read( selectedIdCategoriaProvider );
+    final int? selectedIdCategory = ref.read( selectedIdCategoriaProvider );
     final int selectedIdMarca = ref.read( selectedIdMarcaProvider );
     final String productName = ref.read( productNameProvider );
     final double productPrice = ref.read( productPriceProvider );

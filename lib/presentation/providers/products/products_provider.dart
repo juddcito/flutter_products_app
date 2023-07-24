@@ -69,7 +69,12 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
   Future<void> updateProductByProduct( Product product ) async {
 
     await updateProduct(product);
-    state = state.map((p) => p.id == product.id ? p: product).toList();
+    final int productIndex = state.indexWhere((p) => p.id == product.id);
+
+    if ( productIndex != 1 ){
+      state = state.map((p) => p.id == product.id ? product : p)
+      .toList();
+    }
 
   }
 

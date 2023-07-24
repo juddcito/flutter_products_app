@@ -4,7 +4,6 @@ import 'package:flutter_products_app/presentation/providers/marcas/marcas_provid
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MarcasDropdown extends ConsumerStatefulWidget {
-
   final List<Marca> marcas;
   final String marcaId;
 
@@ -15,60 +14,61 @@ class MarcasDropdown extends ConsumerStatefulWidget {
 }
 
 class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
-
   Marca? selectedMarca;
 
   @override
   void initState() {
     super.initState();
-    
-    int selectedIndex = widget.marcas.indexWhere(
-      (marca) => marca.id.toString() == widget.marcaId
-    );
 
-    if( selectedIndex != -1 ){
-      selectedMarca = widget.marcas[selectedIndex];
-    }
-
+    setMarcas();
   }
-  
+
+  Future<void> setMarcas() async {
+    return Future.delayed(const Duration(milliseconds: 700), () {
+      if (selectedMarca != null) {
+        ref.read(selectedMarcaProvider.notifier).state = selectedMarca!.nombre;
+        ref.read(selectedIdMarcaProvider.notifier).state = selectedMarca!.id;
+        int selectedIndex = widget.marcas
+            .indexWhere((marca) => marca.id.toString() == widget.marcaId);
+
+        if (selectedIndex != -1) {
+          selectedMarca = widget.marcas[selectedIndex];
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-
     final textStyle = Theme.of(context).textTheme.labelLarge;
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(4)
-      ),
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(4)),
       alignment: Alignment.center,
       height: 70,
       child: InputDecorator(
         decoration: const InputDecoration(
-          border: InputBorder.none,
-          labelText: 'Marca',
-          contentPadding: EdgeInsets.symmetric(horizontal: 8)
-        ),
+            border: InputBorder.none,
+            labelText: 'Marca',
+            contentPadding: EdgeInsets.symmetric(horizontal: 8)),
         child: DropdownButton<Marca>(
           isDense: true,
           isExpanded: true,
-          onChanged: (Marca? newValue){
-            ref.read( selectedMarcaProvider.notifier ).state = newValue!.nombre;
-            ref.read( selectedIdMarcaProvider.notifier ).state = newValue.id;
+          onChanged: (Marca? newValue) {
+            ref.read(selectedMarcaProvider.notifier).state = newValue!.nombre;
+            ref.read(selectedIdMarcaProvider.notifier).state = newValue.id;
             setState(() {
               selectedMarca = newValue;
             });
           },
           value: selectedMarca,
           hint: const Text('Seleccione una marca'),
-          items: widget.marcas.map<DropdownMenuItem<Marca>>((Marca marca){
+          items: widget.marcas.map<DropdownMenuItem<Marca>>((Marca marca) {
             return DropdownMenuItem<Marca>(
-              value: marca,
-              child: Text(marca.nombre, style: textStyle)
-            );
+                value: marca, child: Text(marca.nombre, style: textStyle));
           }).toList(),
-          
         ),
       ),
     );

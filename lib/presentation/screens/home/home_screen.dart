@@ -7,14 +7,14 @@ import 'package:flutter_products_app/presentation/widgets/shared/side_menu.dart'
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
 
   static const name = 'home-screen';
 
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     final colors = Theme.of(context).colorScheme;
     final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -61,6 +61,10 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   Widget build(BuildContext context) {
 
     final products = ref.watch(productsProvider);
+
+    for (Product product in products){
+      print('Producto ${product.nombre}');
+    }
 
     if (products.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -109,6 +113,7 @@ class _ProductsSlideshowState extends State<ProductsSlideshow> {
 
   @override
   Widget build(BuildContext context) {
+
     return GridView.builder(
         controller: scrollController,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
