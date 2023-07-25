@@ -32,7 +32,7 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
 
   Future<void> setMarcas() async {
     if (_isMounted) {
-      await Future.delayed(const Duration(milliseconds: 300), () {
+      return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(selectedMarcaProvider.notifier).state = selectedMarca!.nombre;
         ref.read(selectedIdMarcaProvider.notifier).state = selectedMarca!.id;
       });
@@ -41,7 +41,7 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    
+
     int selectedIndex = widget.marcas
         .indexWhere((marca) => marca.id.toString() == widget.marcaId);
 

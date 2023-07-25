@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_products_app/config/router/app_router.dart';
+import 'package:flutter_products_app/features/services/camera_gallery_service_impl.dart';
 import 'package:flutter_products_app/presentation/providers/categories/categories_provider.dart';
 import 'package:flutter_products_app/presentation/providers/marcas/marcas_provider.dart';
 import 'package:flutter_products_app/presentation/providers/products/product_info_provider.dart';
@@ -44,17 +45,30 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
     if (product == null) {
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: colors.primary,
-            foregroundColor: Colors.white,
-            title: const Text('Detalles del producto'),
-          ),
-          body: const Center(child: CircularProgressIndicator()));
+        appBar: AppBar(
+          backgroundColor: colors.primary,
+          foregroundColor: Colors.white,
+          title: const Text('Detalles del producto'),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
     }
 
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () async {
+
+                  final photoPath = CameraGalleryServiceImpl().takePhoto();
+                  if ( photoPath == null ) return;
+
+                  photoPath;
+
+                },
+                icon: const Icon(Icons.camera_alt_outlined))
+          ],
           title: const Text('Detalles del producto',
               style: TextStyle(color: Colors.white)),
           backgroundColor: colors.primary,
@@ -148,7 +162,6 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
   }
 
   Future<void> setProductDetails() async {
-
     if (_isMounted) {
       return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(productNameProvider.notifier).state = widget.product.nombre;

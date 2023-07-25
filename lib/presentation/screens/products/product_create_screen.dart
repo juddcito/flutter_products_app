@@ -13,100 +13,89 @@ import '../../providers/marcas/marcas_provider.dart';
 import '../../widgets/marcas/marcas_dropdown.dart';
 
 class ProductCreateScreen extends ConsumerStatefulWidget {
-
-
   static const name = 'product_create_screen';
   const ProductCreateScreen({super.key});
 
   @override
   ProductScreenState createState() => ProductScreenState();
-  
 }
 
 class ProductScreenState extends ConsumerState<ProductCreateScreen> {
-
   @override
   void initState() {
     super.initState();
-    ref.read( categoriesProvider.notifier ).loadCategories();
-    ref.read( marcasProvider.notifier ).loadMarcas();
+    ref.read(categoriesProvider.notifier).loadCategories();
+    ref.read(marcasProvider.notifier).loadMarcas();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     final colors = Theme.of(context).colorScheme;
-    final categories = ref.watch( categoriesProvider );
-    final marcas = ref.watch( marcasProvider );
+    final categories = ref.watch(categoriesProvider);
+    final marcas = ref.watch(marcasProvider);
 
-      
-  @override
-  Map<String,dynamic> buildProduct() {
+    @override
+    Map<String, dynamic> buildProduct() {
+      final int? selectedIdCategory = ref.read(selectedIdCategoriaProvider);
+      final int selectedIdMarca = ref.read(selectedIdMarcaProvider);
+      final String productName = ref.read(productNameProvider);
+      final double productPrice = ref.read(productPriceProvider);
+      DateTime currentDate = DateTime.now();
+      String formattedDate = currentDate.toLocal().toString().split(' ')[0];
 
-    final int? selectedIdCategory = ref.read( selectedIdCategoriaProvider );
-    final int selectedIdMarca = ref.read( selectedIdMarcaProvider );
-    final String productName = ref.read( productNameProvider );
-    final double productPrice = ref.read( productPriceProvider );
-    DateTime currentDate = DateTime.now();
-    String formattedDate = currentDate.toLocal().toString().split(' ')[0];
+      final Map<String, dynamic> product = {
+        'nombre': productName,
+        'precio': productPrice,
+        'fechaCreacion': formattedDate,
+        'marcaId': selectedIdMarca,
+        'categoriaId': selectedIdCategory
+      };
 
-    final Map<String, dynamic> product = {
-      'nombre': productName,
-      'precio': productPrice,
-      'fechaCreacion': formattedDate,
-      'marcaId': selectedIdMarca,
-      'categoriaId': selectedIdCategory
-    };
-
-    return product;
-
-  }
-
+      return product;
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {}, icon: const Icon(Icons.camera_alt_outlined))
+        ],
         title: const Text('Agregar producto',
             style: TextStyle(color: Colors.white)),
         backgroundColor: colors.primary,
         foregroundColor: Colors.white,
       ),
-      body: _ProductCreateView(marcas: marcas, categories:categories),
+      body: _ProductCreateView(marcas: marcas, categories: categories),
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
         onPressed: () {
           final product = buildProduct();
-          ref.read( productsProvider.notifier ).postProductByProduct(product);
+          ref.read(productsProvider.notifier).postProductByProduct(product);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Producto creado exitosamente.')
-            )
-          );
-
-
+              const SnackBar(content: Text('Producto creado exitosamente.')));
         },
-        child: const Icon( Icons.save_as_sharp ),
+        child: const Icon(Icons.save_as_sharp),
       ),
     );
-  
   }
-
 }
 
 class _ProductCreateView extends ConsumerStatefulWidget {
-
   final List<Categoryy> categories;
   final List<Marca> marcas;
 
-  const _ProductCreateView({super.key, required this.categories, required this.marcas, });
-
+  const _ProductCreateView({
+    super.key,
+    required this.categories,
+    required this.marcas,
+  });
 
   @override
   __ProductCreateViewState createState() => __ProductCreateViewState();
 }
 
 class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
-
   final nombreController = TextEditingController();
   final marcaController = TextEditingController();
   final categoriaController = TextEditingController();
@@ -117,7 +106,7 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
     super.initState();
     nombreController.addListener(() {
       String? name;
-      try{
+      try {
         name = nombreController.text;
       } catch (e) {
         name = '';
@@ -126,16 +115,14 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
     });
     precioController.addListener(() {
       double? price;
-      try{
+      try {
         price = double.parse(precioController.text);
       } catch (e) {
         price = 0;
       }
       ref.read(productPriceProvider.notifier).state = price;
     });
-    
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -180,12 +167,11 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
                 decoration: const InputDecoration(
                     labelText: 'Precio',
                     prefixIcon: Icon(Icons.attach_money),
-                    border: OutlineInputBorder()
-                ),
+                    border: OutlineInputBorder()),
                 keyboardType: const TextInputType.numberWithOptions(),
               ),
             ],
-          ),  
+          ),
         ),
       ],
     );
