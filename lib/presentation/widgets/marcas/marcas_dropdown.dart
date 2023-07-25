@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_products_app/domain/entities/marca.dart';
 import 'package:flutter_products_app/presentation/providers/marcas/marcas_provider.dart';
+import 'package:flutter_products_app/presentation/providers/products/product_info_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MarcasDropdown extends ConsumerStatefulWidget {
@@ -15,31 +16,39 @@ class MarcasDropdown extends ConsumerStatefulWidget {
 
 class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
   Marca? selectedMarca;
+  bool _isMounted = true;
+
+  @override
+  void dispose() {
+    _isMounted = false;
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-
     setMarcas();
   }
 
   Future<void> setMarcas() async {
-    return Future.delayed(const Duration(milliseconds: 700), () {
-      if (selectedMarca != null) {
+    if (_isMounted) {
+      await Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(selectedMarcaProvider.notifier).state = selectedMarca!.nombre;
         ref.read(selectedIdMarcaProvider.notifier).state = selectedMarca!.id;
-        int selectedIndex = widget.marcas
-            .indexWhere((marca) => marca.id.toString() == widget.marcaId);
-
-        if (selectedIndex != -1) {
-          selectedMarca = widget.marcas[selectedIndex];
-        }
-      }
-    });
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    
+    int selectedIndex = widget.marcas
+        .indexWhere((marca) => marca.id.toString() == widget.marcaId);
+
+    if (selectedIndex != -1) {
+      selectedMarca = widget.marcas[selectedIndex];
+    }
+
     final textStyle = Theme.of(context).textTheme.labelLarge;
 
     return Container(

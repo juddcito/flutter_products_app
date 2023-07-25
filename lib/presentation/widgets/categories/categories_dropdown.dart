@@ -17,6 +17,13 @@ class CategoriesDropdown extends ConsumerStatefulWidget {
 
 class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
   Categoryy? selectedCategory;
+  bool _isMounted = true;
+
+  @override
+  void dispose() {
+    _isMounted = false;
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -26,24 +33,26 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
   }
 
   Future<void> setCategorias() async {
-    return Future.delayed(const Duration(milliseconds: 700), () {
-      if (selectedCategory != null) {
+    if (_isMounted) {
+      return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(selectedCategoriaProvider.notifier).state =
             selectedCategory!.nombre;
         ref.read(selectedIdCategoriaProvider.notifier).state =
             selectedCategory!.id;
-        int selectedIndex = widget.categories.indexWhere(
-            (category) => category.id.toString() == widget.categoryId);
-
-        if (selectedIndex != -1) {
-          selectedCategory = widget.categories[selectedIndex];
-        }
-      }
-    });
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    //TODO sacar los valores de los providers si selectedMarca viene nula
+    int selectedIndex = widget.categories.indexWhere(
+        (categoria) => categoria.id.toString() == widget.categoryId);
+
+    if (selectedIndex != -1) {
+      selectedCategory = widget.categories[selectedIndex];
+    }
+
     final textStyle = Theme.of(context).textTheme.labelLarge;
 
     return Container(

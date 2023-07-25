@@ -15,7 +15,6 @@ import '../../../domain/entities/marca.dart';
 import '../../../domain/entities/product.dart';
 import '../../widgets/widgets.dart';
 
-
 class ProductDetailsScreen extends ConsumerStatefulWidget {
   static const name = 'product_details_screen';
 
@@ -28,23 +27,20 @@ class ProductDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
-
   @override
   void initState() {
     super.initState();
     ref.read(productInfoProvider.notifier).loadProduct(widget.productId);
     ref.read(categoriesProvider.notifier).loadCategories();
     ref.read(marcasProvider.notifier).loadMarcas();
-
   }
 
   @override
   Widget build(BuildContext context) {
-    
     final colors = Theme.of(context).colorScheme;
     final Product? product = ref.watch(productInfoProvider)[widget.productId];
     final categories = ref.watch(categoriesProvider);
-    final marcas = ref.watch(marcasProvider);  
+    final marcas = ref.watch(marcasProvider);
 
     if (product == null) {
       return Scaffold(
@@ -77,12 +73,13 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               child: const Icon(Icons.save),
               label: 'Guardar',
               onTap: () async {
-
                 final String productName = ref.read(productNameProvider);
                 final double productPrice = ref.read(productPriceProvider);
-                final String? selectedCategory = ref.read(selectedCategoriaProvider);
-                final int? selectedIdCategory = ref.read(selectedIdCategoriaProvider) ;
-                final String? selectedMarca = ref.read(selectedMarcaProvider) ;
+                final String? selectedCategory =
+                    ref.read(selectedCategoriaProvider);
+                final int? selectedIdCategory =
+                    ref.read(selectedIdCategoriaProvider);
+                final String? selectedMarca = ref.read(selectedMarcaProvider);
                 final int? selectedIdMarca = ref.read(selectedIdMarcaProvider);
 
                 Product updatedProduct = Product(
@@ -94,9 +91,13 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   selectedIdCategory!,
                   selectedCategory!,
                 );
-                
-                await ref.read(productsProvider.notifier).updateProductByProduct(updatedProduct);
-                await ref.read(productInfoProvider.notifier).loadProduct(updatedProduct.id.toString());
+
+                await ref
+                    .read(productsProvider.notifier)
+                    .updateProductByProduct(updatedProduct);
+                await ref
+                    .read(productInfoProvider.notifier)
+                    .loadProduct(updatedProduct.id.toString());
 
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Producto guardado correctamente.')));
@@ -104,14 +105,14 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             ),
             SpeedDialChild(
                 onTap: () async {
-
-                  await ref.read(productsProvider.notifier).deleteProductById(widget.productId);
+                  await ref
+                      .read(productsProvider.notifier)
+                      .deleteProductById(widget.productId);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Producto eliminado correctamente.')),
                   );
                   context.pop();
-                  
                 },
                 backgroundColor: Colors.red.shade100,
                 child: const Icon(Icons.delete),
@@ -134,24 +135,26 @@ class _ProductDetailsView extends ConsumerStatefulWidget {
 }
 
 class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
-
   final nombreController = TextEditingController();
   final precioController = TextEditingController();
+  bool _isMounted = true;
 
-    @override
+  @override
   void dispose() {
     nombreController.dispose();
     precioController.dispose();
+    _isMounted = false;
     super.dispose();
   }
 
   Future<void> setProductDetails() async {
 
-    return Future.delayed(const Duration( seconds: 1 ), () {
-      ref.read(productNameProvider.notifier).state = widget.product.nombre;
-      ref.read(productPriceProvider.notifier).state = widget.product.precio;
-    });
-
+    if (_isMounted) {
+      return Future.delayed(const Duration(milliseconds: 300), () {
+        ref.read(productNameProvider.notifier).state = widget.product.nombre;
+        ref.read(productPriceProvider.notifier).state = widget.product.precio;
+      });
+    }
   }
 
   @override
@@ -179,20 +182,14 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
         price = 0;
       }
       ref.read(productPriceProvider.notifier).state = price;
-
-      
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
-    final productMarca = Marca(widget.product.marcaId, widget.product.marca);
     final categories = widget.categories;
     final marcas = widget.marcas;
-    
+
     return Column(
       children: [
         Expanded(
@@ -222,8 +219,7 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
                 height: 32,
               ),
               MarcasDropdown(
-                  marcas: marcas,
-                  marcaId: widget.product.marcaId.toString()),
+                  marcas: marcas, marcaId: widget.product.marcaId.toString()),
               const SizedBox(
                 height: 32,
               ),
