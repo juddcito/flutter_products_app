@@ -21,7 +21,8 @@ final appRouter = GoRouter(initialLocation: '/', routes: [
         path: 'create',
         name: ProductCreateScreen.name,
         builder:(context, state) => const ProductCreateScreen(),
-      )
+      ),
     ],
   ),
-]);
+]
+);

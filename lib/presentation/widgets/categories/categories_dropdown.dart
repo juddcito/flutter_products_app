@@ -33,7 +33,7 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
   }
 
   Future<void> setCategorias() async {
-    if (_isMounted) {
+    if (_isMounted && selectedCategory != null ) {
       return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(selectedCategoriaProvider.notifier).state =
             selectedCategory!.nombre;

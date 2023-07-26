@@ -32,7 +32,7 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final categories = ref.watch(categoriesProvider);
-    final marcas = ref.watch(marcasProvider);
+    final marcas = ref.watch(marcasProvider); 
 
     @override
     Map<String, dynamic> buildProduct() {

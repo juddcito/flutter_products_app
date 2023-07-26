@@ -15,6 +15,7 @@ class MarcasDropdown extends ConsumerStatefulWidget {
 }
 
 class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
+  
   Marca? selectedMarca;
   bool _isMounted = true;
 
@@ -31,7 +32,7 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
   }
 
   Future<void> setMarcas() async {
-    if (_isMounted) {
+    if (_isMounted && selectedMarca != null ) {
       return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(selectedMarcaProvider.notifier).state = selectedMarca!.nombre;
         ref.read(selectedIdMarcaProvider.notifier).state = selectedMarca!.id;
