@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_products_app/presentation/delegates/search_product_delegate.dart';
 
 class CustomAppBar extends StatelessWidget {
 
@@ -23,10 +24,12 @@ class CustomAppBar extends StatelessWidget {
               Text('Productos SACTI', style: titleStyle,),
               const Spacer(),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+
+
+                },
                 icon: const Icon ( Icons.search )
               )
-            
             ],
           ),
         ),

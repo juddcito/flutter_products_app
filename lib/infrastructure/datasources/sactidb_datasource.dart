@@ -6,8 +6,10 @@ import 'package:flutter_products_app/infrastructure/mappers/product_mapper.dart'
 import 'package:flutter_products_app/infrastructure/models/sactidb/categories_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/marcas_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/product_details_sactidb.dart';
+import 'package:flutter_products_app/infrastructure/models/sactidb/products_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/sactidb_response.dart';
 import 'package:flutter_products_app/domain/entities/category.dart';
+import 'package:flutter_products_app/infrastructure/models/sactidb/searched_products.dart';
 import 'package:intl/intl.dart';
 
 import '../../domain/entities/marca.dart';
@@ -140,6 +142,40 @@ class SactiDbDatasource extends ProductDatasource {
     } catch (e) {
       print('Error $e');
     }
+  }
+
+  @override
+  Future<List<Product>> searchProducts( String search ) async {
+
+    try {
+      final response = await dio.get('',
+      queryParameters: {
+        'search': search,
+        'ver': '1.1'
+      }
+    );
+    
+    List<dynamic> jsonData = response.data;
+    List<SearchedProduct> searchedProducts = jsonData
+    .map((product) => SearchedProduct.fromJson(product)).toList();
+    List<Product> products = searchedProducts
+          .map((product) => Product(
+            product.id,
+            product.nombre,
+            product.precio.toDouble(),
+            product.marca.id.toInt(),
+            product.marca.nombre,
+            product.categoria.id.toInt(),
+            product.categoria.nombre
+      )
+    ).toList();
+    return products;
+
+    } catch (e) {
+      print('Ocurrió un error buscando productos: $e');
+      return [];
+    }
+
   }
 
   /*@override

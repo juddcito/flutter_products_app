@@ -1,6 +1,5 @@
 // Este provider proporciona la información de un Product individual
 
-import 'package:flutter_products_app/domain/repositories/products_repository.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -35,4 +35,9 @@ class ProductRepositoryImpl extends ProductsRepository {
     return datasource.postProduct(product);
   }
   
+  @override
+  Future<List<Product>> searchProducts(String search) {
+    return datasource.searchProducts(search);
+  }
+  
 }

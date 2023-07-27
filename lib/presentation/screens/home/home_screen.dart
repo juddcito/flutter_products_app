@@ -1,7 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_products_app/domain/entities/product.dart';
+import 'package:flutter_products_app/presentation/delegates/search_product_delegate.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
+import 'package:flutter_products_app/presentation/providers/products/products_repository_provider.dart';
+import 'package:flutter_products_app/presentation/providers/search/search_products_provider.dart';
 import 'package:flutter_products_app/presentation/widgets/products/product_item.dart';
 import 'package:flutter_products_app/presentation/widgets/shared/side_menu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +24,31 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: ()  {
+
+              final productRepository = ref.read( productRepositoryProvider );
+              final searchQuery = ref.read(searchQueryProvider);
+            
+              showSearch<Product?>(
+                query: searchQuery,
+                context: context,
+                delegate: SearchProductDelegate(
+                  searchProducts: (query) {
+                    ref.read(searchQueryProvider.notifier).update((state) => query);
+                    return productRepository.searchProducts(query);
+
+                  }  
+                )
+              ).then(( product ){
+                if ( product == null ) return;
+                context.push('/product/${product.id}');
+              });
+
+            },
+            icon: const Icon( Icons.search ))
+        ],
         foregroundColor: Colors.white,
         backgroundColor: colors.primary,
         title: const Text(
