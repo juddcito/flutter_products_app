@@ -148,6 +148,9 @@ class SactiDbDatasource extends ProductDatasource {
   Future<List<Product>> searchProducts( String search ) async {
 
     try {
+
+      if ( search.isEmpty ) return [];
+
       final response = await dio.get('',
       queryParameters: {
         'search': search,

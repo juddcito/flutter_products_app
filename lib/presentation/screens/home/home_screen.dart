@@ -24,22 +24,20 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
+        centerTitle: true,
         actions: [
           IconButton(
             onPressed: ()  {
 
-              final productRepository = ref.read( productRepositoryProvider );
+              final searchedProducts = ref.read( searchedProductProvider );
               final searchQuery = ref.read(searchQueryProvider);
             
               showSearch<Product?>(
                 query: searchQuery,
                 context: context,
                 delegate: SearchProductDelegate(
-                  searchProducts: (query) {
-                    ref.read(searchQueryProvider.notifier).update((state) => query);
-                    return productRepository.searchProducts(query);
-
-                  }  
+                  initialProducts: searchedProducts,
+                  searchProducts: ref.read( searchedProductProvider.notifier ).searchProductsByQuery
                 )
               ).then(( product ){
                 if ( product == null ) return;
@@ -49,11 +47,11 @@ class HomeScreen extends ConsumerWidget {
             },
             icon: const Icon( Icons.search ))
         ],
-        foregroundColor: Colors.white,
-        backgroundColor: colors.primary,
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white,
         title: const Text(
-          'Productos SACTI',
-          style: TextStyle(color: Colors.white),
+          'Productos',
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: Padding(
@@ -61,13 +59,13 @@ class HomeScreen extends ConsumerWidget {
         child: _HomeView(),
       ),
       floatingActionButton: FloatingActionButton(
-          shape: const CircleBorder(),
+        backgroundColor: Colors.blue.shade50,
           onPressed: () {
             context.go('/create');
           },
           child: const Icon(Icons.add)
       ),
-      drawer: SideMenu(scaffoldKey: scaffoldKey)
+      //drawer: SideMenu(scaffoldKey: scaffoldKey)
     );
   }
 }
@@ -89,10 +87,6 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   Widget build(BuildContext context) {
 
     final products = ref.watch(productsProvider);
-
-    for (Product product in products){
-      print('Producto ${product.nombre}');
-    }
 
     if (products.isEmpty) {
       return const Center(child: CircularProgressIndicator());

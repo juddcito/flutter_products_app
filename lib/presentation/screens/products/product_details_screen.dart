@@ -11,7 +11,6 @@ import 'package:flutter_products_app/presentation/providers/categories/categorie
 import 'package:flutter_products_app/presentation/providers/marcas/marcas_provider.dart';
 import 'package:flutter_products_app/presentation/providers/products/product_info_provider.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
-import 'package:flutter_products_app/presentation/providers/products/products_repository_provider.dart';
 import 'package:flutter_products_app/presentation/providers/qr/qr_provider.dart';
 import 'package:flutter_products_app/presentation/widgets/marcas/marcas_dropdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,8 +58,8 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     if (product == null) {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: colors.primary,
-          foregroundColor: Colors.white,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
           title: const Text('Detalles'),
         ),
         body: const Center(child: CircularProgressIndicator()),
@@ -109,10 +108,10 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           ],
           title: const Text(
             'Detalles',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black),
           ),
-          backgroundColor: colors.primary,
-          foregroundColor: Colors.white,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
         ),
         body: FadeInLeft(
           child: _ProductDetailsView(
@@ -123,14 +122,14 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           ),
         ),
         floatingActionButton: SpeedDial(
+          backgroundColor: Colors.blue.shade50,
           overlayOpacity: 0.8,
           spacing: 15,
           spaceBetweenChildren: 15,
           animatedIcon: AnimatedIcons.menu_close,
           children: [
             SpeedDialChild(
-
-              backgroundColor: Colors.green.shade100,
+              backgroundColor: Colors.green.shade50,
               child: const Icon(Icons.save),
               label: 'Guardar',
               onTap: () async {
@@ -181,7 +180,7 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   ref.read(barcodeProvider.notifier).state = '';
                   context.pop();
                 },
-                backgroundColor: Colors.red.shade100,
+                backgroundColor: Colors.red.shade50,
                 child: const Icon(Icons.delete),
                 label: 'Eliminar'),
           ],
