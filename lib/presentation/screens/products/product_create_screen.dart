@@ -62,12 +62,13 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
               onPressed: () {}, icon: const Icon(Icons.camera_alt_outlined))
         ],
         title: const Text('Agregar producto',
-            style: TextStyle(color: Colors.white)),
-        backgroundColor: colors.primary,
-        foregroundColor: Colors.white,
+            style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
       ),
       body: _ProductCreateView(marcas: marcas, categories: categories),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue.shade50,
         shape: const CircleBorder(),
         onPressed: () {
           final product = buildProduct();
@@ -96,6 +97,7 @@ class _ProductCreateView extends ConsumerStatefulWidget {
 }
 
 class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
+  
   final nombreController = TextEditingController();
   final marcaController = TextEditingController();
   final categoriaController = TextEditingController();

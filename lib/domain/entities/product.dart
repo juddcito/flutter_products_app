@@ -1,4 +1,6 @@
 
+import 'package:flutter/services.dart';
+
 class Product {
   final int id;
   final String nombre;
@@ -7,9 +9,22 @@ class Product {
   final String marca;
   final int categoriaId;
   final String categoria;
+  final String codigoBarra;
+  final String codigoQr;
+  final Future<Uint8List>? imagen;
 
-  Product(this.id, this.nombre, this.precio, this.marcaId, this.marca,
-      this.categoriaId, this.categoria);
+  Product(
+    this.id,
+    this.nombre,
+    this.precio,
+    this.marcaId,
+    this.marca,
+    this.categoriaId,
+    this.categoria,
+    this.codigoBarra,
+    this.codigoQr,
+    this.imagen
+  );
 
   Map<String, dynamic> toJson() {
     return {
@@ -19,7 +34,10 @@ class Product {
       'marcaId': marcaId,
       'marca': marca,
       'categoriaId': categoria,
-      'categoria': categoria
+      'categoria': categoria,
+      'codigoBarra': codigoBarra,
+      'codigoQr': codigoQr,
+      'imagen': imagen
     };
   }
 }

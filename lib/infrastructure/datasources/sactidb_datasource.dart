@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_products_app/domain/datasources/products_datasource.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_products_app/infrastructure/models/sactidb/products_sact
 import 'package:flutter_products_app/infrastructure/models/sactidb/sactidb_response.dart';
 import 'package:flutter_products_app/domain/entities/category.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/searched_products.dart';
+import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
 import 'package:intl/intl.dart';
 
 import '../../domain/entities/marca.dart';
@@ -157,7 +160,7 @@ class SactiDbDatasource extends ProductDatasource {
         'ver': '1.1'
       }
     );
-    
+  
     List<dynamic> jsonData = response.data;
     List<SearchedProduct> searchedProducts = jsonData
     .map((product) => SearchedProduct.fromJson(product)).toList();
@@ -169,7 +172,11 @@ class SactiDbDatasource extends ProductDatasource {
             product.marca.id.toInt(),
             product.marca.nombre,
             product.categoria.id.toInt(),
-            product.categoria.nombre
+            product.categoria.nombre,
+            product.codigoBarra,
+            product.codigoQr,
+            product.imagen
+            
       )
     ).toList();
     return products;

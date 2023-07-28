@@ -16,6 +16,7 @@ class CategoriesDropdown extends ConsumerStatefulWidget {
 }
 
 class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
+
   Categoryy? selectedCategory;
   bool _isMounted = true;
 
@@ -28,11 +29,19 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
   @override
   void initState() {
     super.initState();
-
     setCategorias();
   }
 
   Future<void> setCategorias() async {
+
+    
+    int selectedIndex = widget.categories.indexWhere(
+        (categoria) => categoria.id.toString() == widget.categoryId);
+
+    if (selectedIndex != -1) {
+      selectedCategory = widget.categories[selectedIndex];
+    }
+
     if (_isMounted && selectedCategory != null ) {
       return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(selectedCategoriaProvider.notifier).state =
@@ -45,13 +54,7 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO sacar los valores de los providers si selectedMarca viene nula
-    int selectedIndex = widget.categories.indexWhere(
-        (categoria) => categoria.id.toString() == widget.categoryId);
 
-    if (selectedIndex != -1) {
-      selectedCategory = widget.categories[selectedIndex];
-    }
 
     final textStyle = Theme.of(context).textTheme.labelLarge;
 
@@ -70,11 +73,9 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
           isDense: true,
           isExpanded: true,
           onChanged: (Categoryy? newValue) async {
-            print('Categoria ${newValue!.nombre} y su id ${newValue.id}');
             ref.read(selectedCategoriaProvider.notifier).state =
-                newValue.nombre;
+                newValue!.nombre;
             ref.read(selectedIdCategoriaProvider.notifier).state = newValue.id;
-            print('Cambio de estado: ${newValue.nombre}');
             setState(() {
               selectedCategory = newValue;
             });

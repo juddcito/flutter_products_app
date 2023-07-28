@@ -1,4 +1,8 @@
 
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
+
 class SearchedProduct {
     final int id;
     final String nombre;
@@ -6,10 +10,10 @@ class SearchedProduct {
     final DateTime fechaCreacion;
     final Categoria marca;
     final Categoria categoria;
-    final String imagen;
     final String codigoBarra;
     final String codigoQr;
-
+    final Future<Uint8List> imagen;
+    
     SearchedProduct({
         required this.id,
         required this.nombre,
@@ -29,9 +33,9 @@ class SearchedProduct {
         fechaCreacion: DateTime.parse(json["fechaCreacion"]),
         marca: Categoria.fromJson(json["marca"]),
         categoria: Categoria.fromJson(json["categoria"]),
-        imagen: json["imagen"],
         codigoBarra: json["codigoBarra"],
-        codigoQr:json["codigoQr"]
+        codigoQr:json["codigoQr"],
+        imagen: Future.value(base64Decode(json["imagen"])),
     );
 
     Map<String, dynamic> toJson() => {

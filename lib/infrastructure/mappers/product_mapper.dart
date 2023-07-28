@@ -13,6 +13,9 @@ class ProductMapper {
     response.marca,
     response.categoriaId,
     response.categoria,
+    response.codigoBarra,
+    response.codigoQr,
+    response.imagen
   );
 
   static Product productDetailsToEntity ( ProductDetails product ) => Product(
@@ -22,7 +25,10 @@ class ProductMapper {
     product.marca.id,
     product.marca.nombre,
     product.categoria.id,
-    product.categoria.nombre
+    product.categoria.nombre,
+    product.codigoBarra,
+    product.codigoQr,
+    product.imagen
   );
 
 }

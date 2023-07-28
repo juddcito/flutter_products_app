@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
+
 class ProductSactiDb {
   final int id;
   final String nombre;
@@ -6,6 +10,9 @@ class ProductSactiDb {
   final String marca;
   final int categoriaId;
   final String categoria;
+  final String codigoBarra;
+  final String codigoQr;
+  final Future<Uint8List>? imagen;
 
   ProductSactiDb({
     required this.id,
@@ -15,6 +22,9 @@ class ProductSactiDb {
     required this.marca,
     required this.categoriaId,
     required this.categoria,
+    required this.codigoBarra,
+    required this.codigoQr,
+    required this.imagen,
   });
 
   factory ProductSactiDb.fromJson(Map<String, dynamic> json) => ProductSactiDb(
@@ -25,6 +35,9 @@ class ProductSactiDb {
         marca: json["marca"],
         categoriaId: json["categoriaId"],
         categoria: json["categoria"],
+        codigoBarra: json["codigoBarra"],
+        codigoQr:json["codigoQr"],
+        imagen: json["imagen"] != null ? Future.value(base64Decode(json["imagen"])) : null
       );
 
   Map<String, dynamic> toJson() => {

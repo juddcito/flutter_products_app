@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
@@ -49,7 +50,6 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final colors = Theme.of(context).colorScheme;
     final Product? product = ref.watch(productInfoProvider)[widget.productId];
     final categories = ref.watch(categoriesProvider);
     final marcas = ref.watch(marcasProvider);
@@ -74,7 +74,7 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 onPressed: () async {
                   final photoPath = await CameraGalleryServiceImpl().takePhoto();
                   if (photoPath == null) return;
-                  ref.read( productImageProvider.notifier).state = photoPath;
+                  ref.read( productImageProvider.notifier ).state = photoPath;
                 },
                 icon: const Icon(Icons.camera_alt_outlined)),
             IconButton(
@@ -142,6 +142,11 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     ref.read(selectedIdCategoriaProvider);
                 final String? selectedMarca = ref.read(selectedMarcaProvider);
                 final int? selectedIdMarca = ref.read(selectedIdMarcaProvider);
+                final String codigoBarra = ref.read(barcodeProvider);
+                final String codigoQr = ref.read(qrProvider);
+                // Guardar la imagen
+                File imageFile = File(ref.read(productImageProvider));
+                final Future<Uint8List> imagen = await Future.value(imageFile.readAsBytes());
 
                 Product updatedProduct = Product(
                   product.id,
@@ -151,7 +156,12 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   selectedMarca!,
                   selectedIdCategory!,
                   selectedCategory!,
+                  codigoBarra,
+                  codigoQr,
+                  imagen
                 );
+
+                // Reestablecer los providers
 
                 await ref
                     .read(productsProvider.notifier)
@@ -159,7 +169,11 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 await ref
                     .read(productInfoProvider.notifier)
                     .loadProduct(updatedProduct.id.toString());
+
+                // Reestablecer los providers
                 ref.read(barcodeProvider.notifier).state = '';
+                ref.read(qrProvider.notifier).state = '';
+                ref.read(productImageProvider.notifier).state = '';
 
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Producto guardado correctamente.')));
@@ -267,8 +281,8 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
     final String barcode = ref.watch(barcodeProvider);
     final String qrcode = ref.watch(qrProvider);
     final String image = ref.watch(productImageProvider);
-
     late ImageProvider imageProvider;
+    
   if ( image == '' ) { 
 
     imageProvider = AssetImage( 'assets/loaders/no_image.png' );

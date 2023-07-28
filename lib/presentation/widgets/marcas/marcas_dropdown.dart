@@ -15,7 +15,6 @@ class MarcasDropdown extends ConsumerStatefulWidget {
 }
 
 class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
-  
   Marca? selectedMarca;
   bool _isMounted = true;
 
@@ -32,7 +31,14 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
   }
 
   Future<void> setMarcas() async {
-    if (_isMounted && selectedMarca != null ) {
+    int selectedIndex = widget.marcas
+        .indexWhere((marca) => marca.id.toString() == widget.marcaId);
+
+    if (selectedIndex != -1) {
+      selectedMarca = widget.marcas[selectedIndex];
+    }
+
+    if (_isMounted && selectedMarca != null) {
       return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(selectedMarcaProvider.notifier).state = selectedMarca!.nombre;
         ref.read(selectedIdMarcaProvider.notifier).state = selectedMarca!.id;
@@ -42,14 +48,6 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
 
   @override
   Widget build(BuildContext context) {
-
-    int selectedIndex = widget.marcas
-        .indexWhere((marca) => marca.id.toString() == widget.marcaId);
-
-    if (selectedIndex != -1) {
-      selectedMarca = widget.marcas[selectedIndex];
-    }
-
     final textStyle = Theme.of(context).textTheme.labelLarge;
 
     return Container(
