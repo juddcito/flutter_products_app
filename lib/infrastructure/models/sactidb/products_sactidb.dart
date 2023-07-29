@@ -12,7 +12,7 @@ class ProductSactiDb {
   final String categoria;
   final String codigoBarra;
   final String codigoQr;
-  final Future<Uint8List>? imagen;
+  final String imagenUrl;
 
   ProductSactiDb({
     required this.id,
@@ -24,7 +24,7 @@ class ProductSactiDb {
     required this.categoria,
     required this.codigoBarra,
     required this.codigoQr,
-    required this.imagen,
+    required this.imagenUrl
   });
 
   factory ProductSactiDb.fromJson(Map<String, dynamic> json) => ProductSactiDb(
@@ -37,7 +37,7 @@ class ProductSactiDb {
         categoria: json["categoria"],
         codigoBarra: json["codigoBarra"],
         codigoQr:json["codigoQr"],
-        imagen: json["imagen"] != null ? Future.value(base64Decode(json["imagen"])) : null
+        imagenUrl: json["imagenurl"] ?? ''
       );
 
   Map<String, dynamic> toJson() => {

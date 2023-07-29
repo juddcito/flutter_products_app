@@ -13,7 +13,7 @@ class ProductDetails {
     final Categoria categoria;
     final String codigoBarra;
     final String codigoQr;
-    final Future<Uint8List> imagen;
+    final String imagenUrl;
 
     ProductDetails({
         required this.id,
@@ -24,7 +24,7 @@ class ProductDetails {
         required this.categoria,
         required this.codigoBarra,
         required this.codigoQr,
-        required this.imagen
+        required this.imagenUrl
     });
 
     factory ProductDetails.fromJson(Map<String, dynamic> json) => ProductDetails(
@@ -36,7 +36,7 @@ class ProductDetails {
         categoria: Categoria.fromJson(json["categoria"]),
         codigoBarra: json["codigoBarra"],
         codigoQr:json["codigoQr"],
-        imagen: Future.value(base64Decode(json["imagen"]))
+        imagenUrl: json["imagenurl"] ?? ''
     );
 
     Map<String, dynamic> toJson() => {

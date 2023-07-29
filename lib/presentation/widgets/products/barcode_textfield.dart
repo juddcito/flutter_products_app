@@ -20,7 +20,7 @@ class _BarcodeTextfieldState extends ConsumerState<BarcodeTextfield> {
 
   Future<void> resetBarcode() async {
       return Future.delayed(const Duration(milliseconds: 30), () {
-        ref.read(barcodeProvider.notifier).state = '';
+        //ref.read(barcodeProvider.notifier).state = '';
       });
   }
 
@@ -37,11 +37,13 @@ class _BarcodeTextfieldState extends ConsumerState<BarcodeTextfield> {
   
     return TextField(
       controller: widget.barcodeController,
-      decoration: const InputDecoration(
-          enabled: false,
+      decoration: InputDecoration(
           labelText: 'Código de barras',
-          prefixIcon: Icon(Icons.barcode_reader),
-          border: OutlineInputBorder()),
+          prefixIcon: const Icon(Icons.barcode_reader),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20)
+          )
+      ),
     );
     
   }

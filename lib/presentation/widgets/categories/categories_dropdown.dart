@@ -16,7 +16,6 @@ class CategoriesDropdown extends ConsumerStatefulWidget {
 }
 
 class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
-
   Categoryy? selectedCategory;
   bool _isMounted = true;
 
@@ -33,8 +32,6 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
   }
 
   Future<void> setCategorias() async {
-
-    
     int selectedIndex = widget.categories.indexWhere(
         (categoria) => categoria.id.toString() == widget.categoryId);
 
@@ -42,8 +39,8 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
       selectedCategory = widget.categories[selectedIndex];
     }
 
-    if (_isMounted && selectedCategory != null ) {
-      return Future.delayed(const Duration(milliseconds: 300), () {
+    if (_isMounted && selectedCategory != null) {
+      return Future.delayed(const Duration(milliseconds: 700), () {
         ref.read(selectedCategoriaProvider.notifier).state =
             selectedCategory!.nombre;
         ref.read(selectedIdCategoriaProvider.notifier).state =
@@ -54,14 +51,19 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    int selectedIndex = widget.categories.indexWhere(
+        (categoria) => categoria.id.toString() == widget.categoryId);
 
+    if (selectedIndex != -1) {
+      selectedCategory = widget.categories[selectedIndex];
+    }
 
     final textStyle = Theme.of(context).textTheme.labelLarge;
 
     return Container(
       decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(4)),
+          borderRadius: BorderRadius.circular(20)),
       alignment: Alignment.center,
       height: 70,
       child: InputDecorator(
@@ -70,6 +72,7 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
             labelText: 'Categoría',
             contentPadding: EdgeInsets.symmetric(horizontal: 8)),
         child: DropdownButton<Categoryy>(
+          underline: const SizedBox(),
           isDense: true,
           isExpanded: true,
           onChanged: (Categoryy? newValue) async {

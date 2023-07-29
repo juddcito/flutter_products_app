@@ -1,11 +1,10 @@
-import 'dart:ffi';
+
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_products_app/config/router/app_router.dart';
+
 import 'package:flutter_products_app/features/services/camera_gallery_service_impl.dart';
 import 'package:flutter_products_app/presentation/providers/barcode/barcode_provider.dart';
 import 'package:flutter_products_app/presentation/providers/categories/categories_provider.dart';
@@ -53,7 +52,8 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     final Product? product = ref.watch(productInfoProvider)[widget.productId];
     final categories = ref.watch(categoriesProvider);
     final marcas = ref.watch(marcasProvider);
-    final barcodeResult = ref.watch(barcodeProvider);
+    String barcodeResult = ref.watch(barcodeProvider);
+    String qrCode = ref.watch(qrProvider);
 
     if (product == null) {
       return Scaffold(
@@ -119,6 +119,7 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             categories: categories,
             marcas: marcas,
             barcode: barcodeResult,
+            qrCode: qrCode,
           ),
         ),
         floatingActionButton: SpeedDial(
@@ -136,17 +137,21 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
                 final String productName = ref.read(productNameProvider);
                 final double productPrice = ref.read(productPriceProvider);
-                final String? selectedCategory =
-                    ref.read(selectedCategoriaProvider);
-                final int? selectedIdCategory =
-                    ref.read(selectedIdCategoriaProvider);
+                final String? selectedCategory = ref.read(selectedCategoriaProvider);
+                final int? selectedIdCategory = ref.read(selectedIdCategoriaProvider);
                 final String? selectedMarca = ref.read(selectedMarcaProvider);
                 final int? selectedIdMarca = ref.read(selectedIdMarcaProvider);
                 final String codigoBarra = ref.read(barcodeProvider);
                 final String codigoQr = ref.read(qrProvider);
+                final String photoPath  = ref.read(productImageProvider);
+                String imagenUrl = 'no_url';
+                
+                
+                if ( photoPath != '') {
+                  imagenUrl = photoPath.split('/').last;
+                } 
+                  
                 // Guardar la imagen
-                File imageFile = File(ref.read(productImageProvider));
-                final Future<Uint8List> imagen = await Future.value(imageFile.readAsBytes());
 
                 Product updatedProduct = Product(
                   product.id,
@@ -158,40 +163,32 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   selectedCategory!,
                   codigoBarra,
                   codigoQr,
-                  imagen
+                  imagenUrl
                 );
+                
+                await ref.read(productsProvider.notifier).updateProductByProduct(updatedProduct);
+                await ref.read(productInfoProvider.notifier).loadProduct(updatedProduct.id.toString());
 
                 // Reestablecer los providers
+                ref.read(productImageProvider.notifier).update((state) => '');
 
-                await ref
-                    .read(productsProvider.notifier)
-                    .updateProductByProduct(updatedProduct);
-                await ref
-                    .read(productInfoProvider.notifier)
-                    .loadProduct(updatedProduct.id.toString());
-
-                // Reestablecer los providers
-                ref.read(barcodeProvider.notifier).state = '';
-                ref.read(qrProvider.notifier).state = '';
-                ref.read(productImageProvider.notifier).state = '';
-
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Producto guardado correctamente.')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Producto guardado correctamente.')
+                  )
+                );
               },
             ),
             SpeedDialChild(
 
                 onTap: () async {
-
-                  await ref
-                      .read(productsProvider.notifier)
-                      .deleteProductById(widget.productId);
+                  await ref.read(productsProvider.notifier).deleteProductById(widget.productId);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Producto eliminado correctamente.')),
                   );
-
-                  ref.read(barcodeProvider.notifier).state = '';
+                  ref.read(barcodeProvider.notifier).update((state) => '');
+                  ref.read(qrProvider.notifier).update((state) => '');
                   context.pop();
                 },
                 backgroundColor: Colors.red.shade50,
@@ -203,21 +200,28 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 }
 
 class _ProductDetailsView extends ConsumerStatefulWidget {
+
   final Product product;
   final List<Categoryy> categories;
   final List<Marca> marcas;
   final String barcode;
-  const _ProductDetailsView(
-      {required this.product,
-      required this.categories,
-      required this.marcas,
-      this.barcode = ''});
+  final String qrCode;
+
+  const _ProductDetailsView({
+    required this.product,
+    required this.categories,
+    required this.marcas,
+    required this.barcode,
+    required this.qrCode
+    }
+  );
 
   @override
   _ProductDetailsViewState createState() => _ProductDetailsViewState();
 }
 
 class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
+
   final nombreController = TextEditingController();
   final precioController = TextEditingController();
   final barcodeController = TextEditingController();
@@ -237,9 +241,15 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
 
   Future<void> setProductDetails() async {
     if (_isMounted) {
-      return Future.delayed(const Duration(milliseconds: 300), () {
+      return Future.delayed(const Duration(milliseconds: 700), () {
         ref.read(productNameProvider.notifier).state = widget.product.nombre;
         ref.read(productPriceProvider.notifier).state = widget.product.precio;
+        ref.read(selectedCategoriaProvider.notifier).state = widget.product.categoria;
+        ref.read(selectedIdCategoriaProvider.notifier).state = widget.product.categoriaId;
+        ref.read(selectedMarcaProvider.notifier).state = widget.product.marca;
+        ref.read(selectedIdMarcaProvider.notifier).state = widget.product.marcaId;
+        ref.read(barcodeProvider.notifier).state = widget.product.codigoBarra;
+        ref.read(qrProvider.notifier).state = widget.product.codigoQr;
       });
     }
   }
@@ -250,6 +260,8 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
 
     nombreController.text = widget.product.nombre;
     precioController.text = widget.product.precio.toString();
+    qrController.text = widget.product.codigoQr;
+    barcodeController.text = widget.product.codigoBarra;
 
     setProductDetails();
 
@@ -278,20 +290,16 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
 
     final categories = widget.categories;
     final marcas = widget.marcas;
-    final String barcode = ref.watch(barcodeProvider);
-    final String qrcode = ref.watch(qrProvider);
+    final String barcode = widget.barcode;
+    final String qrcode = widget.qrCode;
     final String image = ref.watch(productImageProvider);
     late ImageProvider imageProvider;
     
-  if ( image == '' ) { 
-
-    imageProvider = AssetImage( 'assets/loaders/no_image.png' );
-
-  } else {
-
-    imageProvider = FileImage( File(image) );
-
-  } 
+    if ( image == '' ) { 
+      imageProvider = const AssetImage( 'assets/loaders/no_image.png' );
+    } else {
+      imageProvider = FileImage( File(image) );
+    } 
 
     return Column(
       children: [
@@ -315,10 +323,13 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
               const SizedBox(height: 32),
               TextField(
                 controller: nombreController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                     labelText: 'Nombre',
-                    prefixIcon: Icon(Icons.propane_tank_outlined),
-                    border: OutlineInputBorder()),
+                    prefixIcon: const Icon(Icons.propane_tank_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(40)
+                    ),
+                ),
               ),
               const SizedBox(height: 32),
               MarcasDropdown(
@@ -330,10 +341,13 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
               const SizedBox(height: 32),
               TextField(
                 controller: precioController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                     labelText: 'Precio',
                     prefixIcon: Icon(Icons.attach_money),
-                    border: OutlineInputBorder()),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20)
+                    )
+                  ),
                 keyboardType: const TextInputType.numberWithOptions(),
               ),
               const SizedBox(height: 32),

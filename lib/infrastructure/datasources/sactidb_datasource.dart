@@ -112,7 +112,10 @@ class SactiDbDatasource extends ProductDatasource {
         'nombre': product.nombre,
         'precio': product.precio,
         'marcaId': product.marcaId,
-        'categoriaId': product.categoriaId
+        'categoriaId': product.categoriaId,
+        'codigoBarra': product.codigoBarra,
+        'codigoQr': product.codigoQr,
+        'imagenurl': product.imagenUrl
       });
 
       if (response.statusCode == 200) {
@@ -134,7 +137,10 @@ class SactiDbDatasource extends ProductDatasource {
         'nombre': product['nombre'],
         'precio': product['precio'],
         'marcaId': product['marcaId'],
-        'categoriaId': product['categoriaId']
+        'categoriaId': product['categoriaId'],
+        'codigoBarra': product['codigoBarra'],
+        'codigoQr': product['codigoQr'],
+        'imagen': product['imagen'],
       });
 
       if (response.statusCode == 201) {
@@ -175,7 +181,7 @@ class SactiDbDatasource extends ProductDatasource {
             product.categoria.nombre,
             product.codigoBarra,
             product.codigoQr,
-            product.imagen
+            product.imagenUrl
             
       )
     ).toList();

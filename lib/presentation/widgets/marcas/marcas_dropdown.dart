@@ -39,7 +39,7 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
     }
 
     if (_isMounted && selectedMarca != null) {
-      return Future.delayed(const Duration(milliseconds: 300), () {
+      return Future.delayed(const Duration(milliseconds: 700), () {
         ref.read(selectedMarcaProvider.notifier).state = selectedMarca!.nombre;
         ref.read(selectedIdMarcaProvider.notifier).state = selectedMarca!.id;
       });
@@ -48,12 +48,20 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    
+    int selectedIndex = widget.marcas
+        .indexWhere((marca) => marca.id.toString() == widget.marcaId);
+
+    if (selectedIndex != -1) {
+      selectedMarca = widget.marcas[selectedIndex];
+    }
+
     final textStyle = Theme.of(context).textTheme.labelLarge;
 
     return Container(
       decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(4)),
+          borderRadius: BorderRadius.circular(20)),
       alignment: Alignment.center,
       height: 70,
       child: InputDecorator(
@@ -62,6 +70,8 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
             labelText: 'Marca',
             contentPadding: EdgeInsets.symmetric(horizontal: 8)),
         child: DropdownButton<Marca>(
+          dropdownColor: Colors.white,
+          underline: const SizedBox(),
           isDense: true,
           isExpanded: true,
           onChanged: (Marca? newValue) {

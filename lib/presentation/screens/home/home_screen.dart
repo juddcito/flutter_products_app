@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_products_app/domain/entities/product.dart';
 import 'package:flutter_products_app/presentation/delegates/search_product_delegate.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
-import 'package:flutter_products_app/presentation/providers/products/products_repository_provider.dart';
 import 'package:flutter_products_app/presentation/providers/search/search_products_provider.dart';
 import 'package:flutter_products_app/presentation/widgets/products/product_item.dart';
-import 'package:flutter_products_app/presentation/widgets/shared/side_menu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -48,7 +46,7 @@ class HomeScreen extends ConsumerWidget {
             icon: const Icon( Icons.search ))
         ],
         foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
+        backgroundColor: colors.background,
         title: const Text(
           'Productos',
           style: TextStyle(color: Colors.black),

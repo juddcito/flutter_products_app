@@ -24,9 +24,9 @@ class _QrTextfieldState extends ConsumerState<QrTextfield> {
   }
 
   Future<void> resetQR() async {
-      return Future.delayed(const Duration(milliseconds: 30), () {
-        ref.read(qrProvider.notifier).state = '';
-        ref.read(productImageProvider.notifier).state = '';
+      return Future.delayed(const Duration(milliseconds: 700), () {
+        //ref.read(qrProvider.notifier).state = '';
+        //ref.read(productImageProvider.notifier).state = '';
       });
   }
 
@@ -37,11 +37,13 @@ class _QrTextfieldState extends ConsumerState<QrTextfield> {
 
     return TextField(
       controller: widget.qrController,
-      decoration: const InputDecoration(
-          enabled: false,
+      decoration: InputDecoration(
           labelText: 'Código QR',
-          prefixIcon: Icon(Icons.qr_code),
-          border: OutlineInputBorder()),
+          prefixIcon: const Icon(Icons.qr_code),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20)
+          )
+      ),
     );
   }
 }

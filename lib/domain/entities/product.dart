@@ -11,7 +11,7 @@ class Product {
   final String categoria;
   final String codigoBarra;
   final String codigoQr;
-  final Future<Uint8List>? imagen;
+  final String imagenUrl;
 
   Product(
     this.id,
@@ -23,7 +23,8 @@ class Product {
     this.categoria,
     this.codigoBarra,
     this.codigoQr,
-    this.imagen
+    this.imagenUrl
+
   );
 
   Map<String, dynamic> toJson() {
@@ -37,7 +38,8 @@ class Product {
       'categoria': categoria,
       'codigoBarra': codigoBarra,
       'codigoQr': codigoQr,
-      'imagen': imagen
+      'imagenurl': imagenUrl
+
     };
   }
 }

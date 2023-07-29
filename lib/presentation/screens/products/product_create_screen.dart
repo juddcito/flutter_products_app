@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_products_app/presentation/providers/products/product_info_provider.dart';
+import 'package:flutter_products_app/presentation/providers/barcode/barcode_provider.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
+import 'package:flutter_products_app/presentation/providers/qr/qr_provider.dart';
+import 'package:flutter_products_app/presentation/widgets/products/barcode_textfield.dart';
+import 'package:flutter_products_app/presentation/widgets/products/qr_textfield.dart';
 import 'package:flutter_products_app/presentation/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../../domain/entities/category.dart';
 import '../../../domain/entities/marca.dart';
-import '../../../domain/entities/product.dart';
 import '../../providers/categories/categories_provider.dart';
 import '../../providers/marcas/marcas_provider.dart';
 import '../../widgets/marcas/marcas_dropdown.dart';
@@ -30,12 +31,16 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     final colors = Theme.of(context).colorScheme;
     final categories = ref.watch(categoriesProvider);
     final marcas = ref.watch(marcasProvider); 
+    final String barcode = '';
+    final String qrcode = '';
 
     @override
     Map<String, dynamic> buildProduct() {
+      
       final int? selectedIdCategory = ref.read(selectedIdCategoriaProvider);
       final int selectedIdMarca = ref.read(selectedIdMarcaProvider);
       final String productName = ref.read(productNameProvider);
@@ -63,10 +68,10 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
         ],
         title: const Text('Agregar producto',
             style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
+        backgroundColor: colors.background,
         foregroundColor: Colors.black,
       ),
-      body: _ProductCreateView(marcas: marcas, categories: categories),
+      body: _ProductCreateView(marcas: marcas, categories: categories, barcode: barcode, qrCode: qrcode,),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue.shade50,
         shape: const CircleBorder(),
@@ -83,13 +88,18 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
 }
 
 class _ProductCreateView extends ConsumerStatefulWidget {
+
   final List<Categoryy> categories;
   final List<Marca> marcas;
+  final String barcode;
+  final String qrCode;
 
   const _ProductCreateView({
     super.key,
     required this.categories,
     required this.marcas,
+    required this.barcode,
+    required this.qrCode
   });
 
   @override
@@ -102,6 +112,8 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
   final marcaController = TextEditingController();
   final categoriaController = TextEditingController();
   final precioController = TextEditingController();
+  final barcodeController = TextEditingController();
+  final qrController = TextEditingController();
 
   @override
   void initState() {
@@ -148,10 +160,13 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
               ),
               TextField(
                 controller: nombreController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                     labelText: 'Nombre',
-                    prefixIcon: Icon(Icons.propane_tank_outlined),
-                    border: OutlineInputBorder()),
+                    prefixIcon: const Icon(Icons.propane_tank_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20)
+                    )
+                ),
               ),
               const SizedBox(
                 height: 32,
@@ -166,11 +181,25 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
               ),
               TextField(
                 controller: precioController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                     labelText: 'Precio',
-                    prefixIcon: Icon(Icons.attach_money),
-                    border: OutlineInputBorder()),
+                    prefixIcon: const Icon(Icons.attach_money),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20)
+                    )
+                ),
                 keyboardType: const TextInputType.numberWithOptions(),
+              ),
+              const SizedBox(
+                height: 32,
+              ),
+              QrTextfield(qrController: qrController, qrcode: widget.qrCode),
+              const SizedBox(
+                height: 32,
+              ),
+              BarcodeTextfield(barcodeController: barcodeController, barcode: widget.barcode),
+              const SizedBox(
+                height: 32,
               ),
             ],
           ),
