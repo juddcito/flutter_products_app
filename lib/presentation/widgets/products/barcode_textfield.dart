@@ -37,6 +37,7 @@ class _BarcodeTextfieldState extends ConsumerState<BarcodeTextfield> {
   
     return TextField(
       controller: widget.barcodeController,
+      enabled: false,
       decoration: InputDecoration(
           labelText: 'Código de barras',
           prefixIcon: const Icon(Icons.barcode_reader),

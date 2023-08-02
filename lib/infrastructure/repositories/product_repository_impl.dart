@@ -26,13 +26,13 @@ class ProductRepositoryImpl extends ProductsRepository {
   }
   
   @override
-  Future<void> updateProduct(Product product) {
-    return datasource.updateProduct(product);
+  Future<void> updateProduct(Product product, String photoPath) {
+    return datasource.updateProduct(product, photoPath);
   }
 
   @override
-  Future<void> postProduct(Map<String,dynamic> product) {
-    return datasource.postProduct(product);
+  Future<void> postProduct(Map<String,dynamic> product, String photoPath) {
+    return datasource.postProduct(product, photoPath);
   }
   
   @override

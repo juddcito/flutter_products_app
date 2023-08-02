@@ -1,9 +1,11 @@
-
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import 'package:flutter_products_app/features/services/camera_gallery_service_impl.dart';
 import 'package:flutter_products_app/presentation/providers/barcode/barcode_provider.dart';
@@ -46,9 +48,53 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     ref.read(marcasProvider.notifier).loadMarcas();
   }
 
+  Future<Uint8List> testCompressFile(File file) async {
+    var result = await FlutterImageCompress.compressWithFile(file.absolute.path,
+        minWidth: 2300, minHeight: 1500, quality: 94, rotate: 90);
+
+    return result!;
+  }
+
+  void uploadPhoto(Product product, String photoPath) async {
+    
+    File imageFile = File(photoPath);
+
+    try {
+      final dio = Dio(BaseOptions(
+          baseUrl: 'http://192.168.0.128:6001/api/productos',
+          queryParameters: {
+            'ver': '1.1'
+          }
+      ));
+
+      FormData data = FormData.fromMap({
+        'ProductoDto': {
+        'id': product.id,
+        'nombre': product.nombre,
+        'precio': product.precio,
+        'marcaId': product.marcaId,
+        'categoriaId': product.categoriaId,
+        'codigoBarra': product.codigoBarra,
+        'codigoQr': product.codigoQr,
+        },
+        'ImagenCarga': MultipartFile.fromBytes(
+          imageFile.readAsBytesSync(),
+          filename: '${product.id}.jpg'
+        )
+      });
+
+      final response = await dio.put('',
+          data: data,
+          options: Options(contentType: 'multipart/form-data')
+      );
+      
+    } catch (e) {
+      print('Ocurrió un error actualizando producto: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     final Product? product = ref.watch(productInfoProvider)[widget.productId];
     final categories = ref.watch(categoriesProvider);
     final marcas = ref.watch(marcasProvider);
@@ -72,9 +118,10 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           actions: [
             IconButton(
                 onPressed: () async {
-                  final photoPath = await CameraGalleryServiceImpl().takePhoto();
+                  final photoPath =
+                      await CameraGalleryServiceImpl().takePhoto();
                   if (photoPath == null) return;
-                  ref.read( productImageProvider.notifier ).state = photoPath;
+                  ref.read(productImageProvider.notifier).state = photoPath;
                 },
                 icon: const Icon(Icons.camera_alt_outlined)),
             IconButton(
@@ -134,55 +181,50 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               child: const Icon(Icons.save),
               label: 'Guardar',
               onTap: () async {
-
                 final String productName = ref.read(productNameProvider);
                 final double productPrice = ref.read(productPriceProvider);
-                final String? selectedCategory = ref.read(selectedCategoriaProvider);
-                final int? selectedIdCategory = ref.read(selectedIdCategoriaProvider);
+                final String? selectedCategory =
+                    ref.read(selectedCategoriaProvider);
+                final int? selectedIdCategory =
+                    ref.read(selectedIdCategoriaProvider);
                 final String? selectedMarca = ref.read(selectedMarcaProvider);
                 final int? selectedIdMarca = ref.read(selectedIdMarcaProvider);
                 final String codigoBarra = ref.read(barcodeProvider);
                 final String codigoQr = ref.read(qrProvider);
-                final String photoPath  = ref.read(productImageProvider);
+                final String photoPath = ref.read(productImageProvider);
                 String imagenUrl = 'no_url';
-                
-                
-                if ( photoPath != '') {
-                  imagenUrl = photoPath.split('/').last;
-                } 
-                  
                 // Guardar la imagen
 
                 Product updatedProduct = Product(
-                  product.id,
-                  productName,
-                  productPrice,
-                  selectedIdMarca!,
-                  selectedMarca!,
-                  selectedIdCategory!,
-                  selectedCategory!,
-                  codigoBarra,
-                  codigoQr,
-                  imagenUrl
-                );
-                
-                await ref.read(productsProvider.notifier).updateProductByProduct(updatedProduct);
-                await ref.read(productInfoProvider.notifier).loadProduct(updatedProduct.id.toString());
+                    product.id,
+                    productName,
+                    productPrice,
+                    selectedIdMarca!,
+                    selectedMarca!,
+                    selectedIdCategory!,
+                    selectedCategory!,
+                    codigoBarra,
+                    codigoQr,
+                    imagenUrl);
 
+                // Subimos la foto
+                //uploadPhoto(updatedProduct, photoPath);
+
+                await ref.read(productsProvider.notifier).updateProductByProduct(updatedProduct, photoPath);
+                await ref.read(productInfoProvider.notifier).loadProduct(updatedProduct.id.toString());
                 // Reestablecer los providers
+
                 ref.read(productImageProvider.notifier).update((state) => '');
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Producto guardado correctamente.')
-                  )
-                );
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Producto guardado correctamente.')));
               },
             ),
             SpeedDialChild(
-
                 onTap: () async {
-                  await ref.read(productsProvider.notifier).deleteProductById(widget.productId);
+                  await ref
+                      .read(productsProvider.notifier)
+                      .deleteProductById(widget.productId);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Producto eliminado correctamente.')),
@@ -200,28 +242,24 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 }
 
 class _ProductDetailsView extends ConsumerStatefulWidget {
-
   final Product product;
   final List<Categoryy> categories;
   final List<Marca> marcas;
   final String barcode;
   final String qrCode;
 
-  const _ProductDetailsView({
-    required this.product,
-    required this.categories,
-    required this.marcas,
-    required this.barcode,
-    required this.qrCode
-    }
-  );
+  const _ProductDetailsView(
+      {required this.product,
+      required this.categories,
+      required this.marcas,
+      required this.barcode,
+      required this.qrCode});
 
   @override
   _ProductDetailsViewState createState() => _ProductDetailsViewState();
 }
 
 class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
-
   final nombreController = TextEditingController();
   final precioController = TextEditingController();
   final barcodeController = TextEditingController();
@@ -244,10 +282,13 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
       return Future.delayed(const Duration(milliseconds: 700), () {
         ref.read(productNameProvider.notifier).state = widget.product.nombre;
         ref.read(productPriceProvider.notifier).state = widget.product.precio;
-        ref.read(selectedCategoriaProvider.notifier).state = widget.product.categoria;
-        ref.read(selectedIdCategoriaProvider.notifier).state = widget.product.categoriaId;
+        ref.read(selectedCategoriaProvider.notifier).state =
+            widget.product.categoria;
+        ref.read(selectedIdCategoriaProvider.notifier).state =
+            widget.product.categoriaId;
         ref.read(selectedMarcaProvider.notifier).state = widget.product.marca;
-        ref.read(selectedIdMarcaProvider.notifier).state = widget.product.marcaId;
+        ref.read(selectedIdMarcaProvider.notifier).state =
+            widget.product.marcaId;
         ref.read(barcodeProvider.notifier).state = widget.product.codigoBarra;
         ref.read(qrProvider.notifier).state = widget.product.codigoQr;
       });
@@ -287,19 +328,18 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-
     final categories = widget.categories;
     final marcas = widget.marcas;
     final String barcode = widget.barcode;
     final String qrcode = widget.qrCode;
     final String image = ref.watch(productImageProvider);
     late ImageProvider imageProvider;
-    
-    if ( image == '' ) { 
-      imageProvider = const AssetImage( 'assets/loaders/no_image.png' );
+
+    if (image == '') {
+      imageProvider = const AssetImage('assets/loaders/no_image.png');
     } else {
-      imageProvider = FileImage( File(image) );
-    } 
+      imageProvider = FileImage(File(image));
+    }
 
     return Column(
       children: [
@@ -312,23 +352,21 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
                 child: Padding(
                   padding: const EdgeInsets.all(1.0),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image(
-                      image: imageProvider,
-                      fit: BoxFit.fill,
-                    )
-                  ),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image(
+                        image: imageProvider,
+                        fit: BoxFit.fill,
+                      )),
                 ),
               ),
               const SizedBox(height: 32),
               TextField(
                 controller: nombreController,
                 decoration: InputDecoration(
-                    labelText: 'Nombre',
-                    prefixIcon: const Icon(Icons.propane_tank_outlined),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(40)
-                    ),
+                  labelText: 'Nombre',
+                  prefixIcon: const Icon(Icons.propane_tank_outlined),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(40)),
                 ),
               ),
               const SizedBox(height: 32),
@@ -343,11 +381,9 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
                 controller: precioController,
                 decoration: InputDecoration(
                     labelText: 'Precio',
-                    prefixIcon: Icon(Icons.attach_money),
+                    prefixIcon: const Icon(Icons.attach_money),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20)
-                    )
-                  ),
+                        borderRadius: BorderRadius.circular(20))),
                 keyboardType: const TextInputType.numberWithOptions(),
               ),
               const SizedBox(height: 32),
@@ -356,7 +392,6 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
               BarcodeTextfield(
                   barcodeController: barcodeController, barcode: barcode),
               const SizedBox(height: 32),
-
             ],
           ),
         ),

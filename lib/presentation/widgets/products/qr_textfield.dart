@@ -39,6 +39,7 @@ class _QrTextfieldState extends ConsumerState<QrTextfield> {
       controller: widget.qrController,
       decoration: InputDecoration(
           labelText: 'Código QR',
+          enabled: false,
           prefixIcon: const Icon(Icons.qr_code),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20)

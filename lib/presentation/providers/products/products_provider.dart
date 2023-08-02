@@ -27,8 +27,8 @@ final productsProvider =
 
 typedef ProductCallback = Future<List<Product>> Function({int pageIndex});
 typedef DeleteProductCallback = Future<bool>Function( String productId );
-typedef UpdateProductCallback = Future<void>Function( Product product );
-typedef PostProductCallback = Future<void>Function( Map<String,dynamic> product );
+typedef UpdateProductCallback = Future<void>Function( Product product, String photoPath );
+typedef PostProductCallback = Future<void>Function( Map<String,dynamic> product, String photoPath );
 
 class ProductsNotifier extends StateNotifier<List<Product>> {
   // Saber cuál es la página actual
@@ -70,9 +70,9 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
     }
   }
 
-  Future<void> updateProductByProduct( Product product ) async {
+  Future<void> updateProductByProduct( Product product, String photoPath ) async {
 
-    await updateProduct(product);
+    await updateProduct(product, photoPath);
     final int productIndex = state.indexWhere((p) => p.id == product.id);
 
     if ( productIndex != 1 ){
@@ -82,9 +82,9 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
 
   }
 
-  Future<void> postProductByProduct( Map<String,dynamic> product ) async {
+  Future<void> postProductByProduct( Map<String,dynamic> product, String photoPath ) async {
 
-    await postProduct(product);
+    await postProduct(product, photoPath);
     state = [...state];
 
   }

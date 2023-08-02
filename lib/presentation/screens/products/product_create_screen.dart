@@ -34,10 +34,10 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
 
     final colors = Theme.of(context).colorScheme;
     final categories = ref.watch(categoriesProvider);
-    final marcas = ref.watch(marcasProvider); 
-    final String barcode = '';
-    final String qrcode = '';
-
+    final marcas = ref.watch(marcasProvider);
+    String barcode = '';
+    String qrcode = '';
+    
     @override
     Map<String, dynamic> buildProduct() {
       
@@ -47,13 +47,17 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
       final double productPrice = ref.read(productPriceProvider);
       DateTime currentDate = DateTime.now();
       String formattedDate = currentDate.toLocal().toString().split(' ')[0];
+      String barcode = ref.watch(barcodeProvider);
+      String qrCode = ref.watch(qrProvider);
 
       final Map<String, dynamic> product = {
         'nombre': productName,
         'precio': productPrice,
         'fechaCreacion': formattedDate,
         'marcaId': selectedIdMarca,
-        'categoriaId': selectedIdCategory
+        'categoriaId': selectedIdCategory,
+        'codigoBarra': barcode,
+        'codigoQr': qrCode
       };
 
       return product;
@@ -64,22 +68,25 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
       appBar: AppBar(
         actions: [
           IconButton(
-              onPressed: () {}, icon: const Icon(Icons.camera_alt_outlined))
+            onPressed: () {
+
+            },
+            icon: const Icon(Icons.camera_alt_outlined)
+          )
         ],
-        title: const Text('Agregar producto',
-            style: TextStyle(color: Colors.black)),
+        title: const Text('Agregar producto', style: TextStyle(color: Colors.black)),
         backgroundColor: colors.background,
         foregroundColor: Colors.black,
       ),
-      body: _ProductCreateView(marcas: marcas, categories: categories, barcode: barcode, qrCode: qrcode,),
+      body: _ProductCreateView(marcas: marcas, categories: categories, barcode: barcode, qrCode: qrcode),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue.shade50,
         shape: const CircleBorder(),
         onPressed: () {
           final product = buildProduct();
-          ref.read(productsProvider.notifier).postProductByProduct(product);
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Producto creado exitosamente.')));
+          final photoPath = ref.read(productImageProvider);
+          ref.read(productsProvider.notifier).postProductByProduct(product, photoPath);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Producto creado exitosamente.')));
         },
         child: const Icon(Icons.save_as_sharp),
       ),

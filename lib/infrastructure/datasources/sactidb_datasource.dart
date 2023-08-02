@@ -8,29 +8,35 @@ import 'package:flutter_products_app/infrastructure/mappers/product_mapper.dart'
 import 'package:flutter_products_app/infrastructure/models/sactidb/categories_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/marcas_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/product_details_sactidb.dart';
-import 'package:flutter_products_app/infrastructure/models/sactidb/products_sactidb.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/sactidb_response.dart';
 import 'package:flutter_products_app/domain/entities/category.dart';
 import 'package:flutter_products_app/infrastructure/models/sactidb/searched_products.dart';
-import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
-import 'package:intl/intl.dart';
 
 import '../../domain/entities/marca.dart';
 
 class SactiDbDatasource extends ProductDatasource {
+  // Para POST de productos
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:120/api/productos',
+    baseUrl: 'http://192.168.0.128:6001/api/productos',
   ));
 
   // Para consultar marcas y categorías
   final dio2 = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:120/api',
+    baseUrl: 'http://192.168.0.128:6001/api',
+  ));
+
+  // Para PUT de productos
+  final dio3 = Dio(BaseOptions(
+    baseUrl: 'http://192.168.0.128:6001/api/productos',
+    queryParameters: {
+      'ver': '1.1'
+    }
   ));
 
   @override
   Future<List<Product>> getProducts({int pageIndex = 1}) async {
-
-    final response = await dio.get('/', queryParameters: {'pageIndex': pageIndex});
+    final response =
+        await dio.get('/', queryParameters: {'pageIndex': pageIndex});
 
     final sactiDbResponse = SactiDbResponse.fromJson(response.data);
 
@@ -40,7 +46,6 @@ class SactiDbDatasource extends ProductDatasource {
         .toList();
 
     return products;
-
   }
 
   @override
@@ -105,18 +110,34 @@ class SactiDbDatasource extends ProductDatasource {
 
   // /api/productos/$idProducto
   @override
-  Future<void> updateProduct(Product product) async {
+  Future<void> updateProduct(Product product, String photoPath) async {
+
+    File imageFile = File(photoPath);
+
     try {
-      final response = await dio.put('/${product.id}', data: {
-        'id': product.id,
-        'nombre': product.nombre,
-        'precio': product.precio,
-        'marcaId': product.marcaId,
-        'categoriaId': product.categoriaId,
-        'codigoBarra': product.codigoBarra,
-        'codigoQr': product.codigoQr,
-        'imagenurl': product.imagenUrl
+
+        FormData data = FormData.fromMap({
+          'ProductoDto': {
+          'id': product.id,
+          'nombre': product.nombre,
+          'precio': product.precio,
+          'marcaId': product.marcaId,
+          'categoriaId': product.categoriaId,
+          'codigoBarra': product.codigoBarra,
+          'codigoQr': product.codigoQr,
+        },
+        'ImagenCarga': MultipartFile.fromBytes(
+          imageFile.readAsBytesSync(),
+          filename: '${product.id}.jpg'
+        )
       });
+
+      final response = await dio3.put(
+        '',
+        data: data,
+        options: Options(contentType: 'multipart/form-data')
+      );
+      print(response);
 
       if (response.statusCode == 200) {
         print('Petición PUT exitosa: ${response.data}');
@@ -129,19 +150,33 @@ class SactiDbDatasource extends ProductDatasource {
   }
 
   @override
-  Future<void> postProduct(Map<String,dynamic> product) async {
-
+  Future<void> postProduct(Map<String, dynamic> product, String photoPath) async {
+    
     try {
-      final response = await dio.post('', data: 
-      {
-        'nombre': product['nombre'],
-        'precio': product['precio'],
-        'marcaId': product['marcaId'],
-        'categoriaId': product['categoriaId'],
-        'codigoBarra': product['codigoBarra'],
-        'codigoQr': product['codigoQr'],
-        'imagen': product['imagen'],
+
+      File imageFile = File(photoPath);
+
+      FormData data = FormData.fromMap({
+        'ProductoDto': {
+          'id': product["id"],
+          'nombre': product["nombre"],
+          'precio': product["precio"],
+          'marcaId': product["marcaId"],
+          'categoriaId': product["categoriaId"],
+          'codigoBarra': product["codigoBarra"],
+          'codigoQr': product["codigoQur"],
+        },
+        'ImagenCarga': MultipartFile.fromBytes(imageFile.readAsBytesSync(),
+            filename: '${product["id"]}.jpg')
       });
+
+      final response = await dio.post(
+        '',
+        data: data,
+        options: Options(
+          contentType: 'multipart/form-data'
+        )
+      );
 
       if (response.statusCode == 201) {
         print('Petición POST exitosa: ${response.data}');
@@ -154,44 +189,34 @@ class SactiDbDatasource extends ProductDatasource {
   }
 
   @override
-  Future<List<Product>> searchProducts( String search ) async {
-
+  Future<List<Product>> searchProducts(String search) async {
     try {
+      if (search.isEmpty) return [];
 
-      if ( search.isEmpty ) return [];
+      final response =
+          await dio.get('', queryParameters: {'search': search, 'ver': '1.1'});
 
-      final response = await dio.get('',
-      queryParameters: {
-        'search': search,
-        'ver': '1.1'
-      }
-    );
-  
-    List<dynamic> jsonData = response.data;
-    List<SearchedProduct> searchedProducts = jsonData
-    .map((product) => SearchedProduct.fromJson(product)).toList();
-    List<Product> products = searchedProducts
+      List<dynamic> jsonData = response.data;
+      List<SearchedProduct> searchedProducts =
+          jsonData.map((product) => SearchedProduct.fromJson(product)).toList();
+      List<Product> products = searchedProducts
           .map((product) => Product(
-            product.id,
-            product.nombre,
-            product.precio.toDouble(),
-            product.marca.id.toInt(),
-            product.marca.nombre,
-            product.categoria.id.toInt(),
-            product.categoria.nombre,
-            product.codigoBarra,
-            product.codigoQr,
-            product.imagenUrl
-            
-      )
-    ).toList();
-    return products;
-
+              product.id,
+              product.nombre,
+              product.precio.toDouble(),
+              product.marca.id.toInt(),
+              product.marca.nombre,
+              product.categoria.id.toInt(),
+              product.categoria.nombre,
+              product.codigoBarra,
+              product.codigoQr,
+              product.imagenUrl))
+          .toList();
+      return products;
     } catch (e) {
       print('Ocurrió un error buscando productos: $e');
       return [];
     }
-
   }
 
   /*@override

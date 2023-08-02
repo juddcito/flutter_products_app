@@ -13,7 +13,7 @@ class CameraGalleryServiceImpl extends CameraGalleryService {
     
     final XFile? photo = await _picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 80,
+      imageQuality: 25,
     );
 
     if ( photo == null ) return null;
@@ -29,7 +29,7 @@ class CameraGalleryServiceImpl extends CameraGalleryService {
     
     final XFile? photo = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 80,
+      imageQuality: 25,
       preferredCameraDevice: CameraDevice.rear
     );
 
