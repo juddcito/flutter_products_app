@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_products_app/presentation/providers/barcode/barcode_provider.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
@@ -6,9 +8,12 @@ import 'package:flutter_products_app/presentation/widgets/products/barcode_textf
 import 'package:flutter_products_app/presentation/widgets/products/qr_textfield.dart';
 import 'package:flutter_products_app/presentation/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:simple_barcode_scanner/enum.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 import '../../../domain/entities/category.dart';
 import '../../../domain/entities/marca.dart';
+import '../../../features/services/camera_gallery_service_impl.dart';
 import '../../providers/categories/categories_provider.dart';
 import '../../providers/marcas/marcas_provider.dart';
 import '../../widgets/marcas/marcas_dropdown.dart';
@@ -31,16 +36,14 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final colors = Theme.of(context).colorScheme;
     final categories = ref.watch(categoriesProvider);
     final marcas = ref.watch(marcasProvider);
     String barcode = '';
     String qrcode = '';
-    
+
     @override
     Map<String, dynamic> buildProduct() {
-      
       final int? selectedIdCategory = ref.read(selectedIdCategoriaProvider);
       final int selectedIdMarca = ref.read(selectedIdMarcaProvider);
       final String productName = ref.read(productNameProvider);
@@ -68,17 +71,50 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () {
+              onPressed: () async {
+                final photoPath = await CameraGalleryServiceImpl().takePhoto();
+                if (photoPath == null) return;
+                ref.read(productImageProvider.notifier).state = photoPath;
+              },
+              icon: const Icon(Icons.camera_alt_outlined)),
+          IconButton(
+              onPressed: () async {
+                var res = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SimpleBarcodeScannerPage(
+                        scanType: ScanType.qr,
+                      ),
+                    ));
 
-            },
-            icon: const Icon(Icons.camera_alt_outlined)
-          )
+                if (res is String) {
+                  ref.read(qrProvider.notifier).update((state) => res);
+                }
+              },
+              icon: const Icon(Icons.qr_code)),
+          IconButton(
+              onPressed: () async {
+                var res = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SimpleBarcodeScannerPage(),
+                    ));
+
+                if (res is String) {
+                  ref.read(barcodeProvider.notifier).update((state) => res);
+                }
+              },
+              icon: const Icon(Icons.barcode_reader))
         ],
-        title: const Text('Agregar producto', style: TextStyle(color: Colors.black)),
+        title: const Text('Registrar', style: TextStyle(color: Colors.black)),
         backgroundColor: colors.background,
         foregroundColor: Colors.black,
       ),
-      body: _ProductCreateView(marcas: marcas, categories: categories, barcode: barcode, qrCode: qrcode),
+      body: _ProductCreateView(
+          marcas: marcas,
+          categories: categories,
+          barcode: barcode,
+          qrCode: qrcode),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue.shade50,
         shape: const CircleBorder(),
@@ -86,7 +122,8 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
           final product = buildProduct();
           final photoPath = ref.read(productImageProvider);
           ref.read(productsProvider.notifier).postProductByProduct(product, photoPath);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Producto creado exitosamente.')));
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Producto creado exitosamente.')));
         },
         child: const Icon(Icons.save_as_sharp),
       ),
@@ -95,26 +132,23 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
 }
 
 class _ProductCreateView extends ConsumerStatefulWidget {
-
   final List<Categoryy> categories;
   final List<Marca> marcas;
   final String barcode;
   final String qrCode;
 
-  const _ProductCreateView({
-    super.key,
-    required this.categories,
-    required this.marcas,
-    required this.barcode,
-    required this.qrCode
-  });
+  const _ProductCreateView(
+      {super.key,
+      required this.categories,
+      required this.marcas,
+      required this.barcode,
+      required this.qrCode});
 
   @override
   __ProductCreateViewState createState() => __ProductCreateViewState();
 }
 
 class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
-  
   final nombreController = TextEditingController();
   final marcaController = TextEditingController();
   final categoriaController = TextEditingController();
@@ -147,20 +181,32 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
 
   @override
   Widget build(BuildContext context) {
+    final String image = ref.watch(productImageProvider);
+    late ImageProvider imageProvider;
+
+    if (image == '') {
+      imageProvider = const AssetImage('assets/loaders/no_image.png');
+    } else {
+      imageProvider = FileImage(File(image));
+    }
+
     return Column(
       children: [
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(8),
             children: [
-              const SizedBox(
-                width: double.infinity,
-                height: 200,
-                child: Card(
-                    child: Icon(
-                  Icons.no_photography_outlined,
-                  size: 128,
-                )),
+              SizedBox(
+                height: 300,
+                child: Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image(
+                        image: imageProvider,
+                        fit: BoxFit.fill,
+                      )),
+                ),
               ),
               const SizedBox(
                 height: 32,
@@ -171,9 +217,7 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
                     labelText: 'Nombre',
                     prefixIcon: const Icon(Icons.propane_tank_outlined),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20)
-                    )
-                ),
+                        borderRadius: BorderRadius.circular(20))),
               ),
               const SizedBox(
                 height: 32,
@@ -192,9 +236,7 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
                     labelText: 'Precio',
                     prefixIcon: const Icon(Icons.attach_money),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20)
-                    )
-                ),
+                        borderRadius: BorderRadius.circular(20))),
                 keyboardType: const TextInputType.numberWithOptions(),
               ),
               const SizedBox(
@@ -204,7 +246,9 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
               const SizedBox(
                 height: 32,
               ),
-              BarcodeTextfield(barcodeController: barcodeController, barcode: widget.barcode),
+              BarcodeTextfield(
+                  barcodeController: barcodeController,
+                  barcode: widget.barcode),
               const SizedBox(
                 height: 32,
               ),

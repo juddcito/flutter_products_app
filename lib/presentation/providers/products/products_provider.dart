@@ -92,5 +92,5 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
 }
 
 final productNameProvider = StateProvider<String>((ref) => '');
-final productPriceProvider = StateProvider<double>((ref) => 0);
+final productPriceProvider = StateProvider<double>((ref) => 0.0);
 final productImageProvider = StateProvider<String>((ref) => '');

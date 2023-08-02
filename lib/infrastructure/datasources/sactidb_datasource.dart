@@ -27,7 +27,7 @@ class SactiDbDatasource extends ProductDatasource {
 
   // Para PUT de productos
   final dio3 = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:6001/api/productos',
+    baseUrl: 'https://nuevaprueba1.azurewebsites.net/api/productos',
     queryParameters: {
       'ver': '1.1'
     }
@@ -151,23 +151,27 @@ class SactiDbDatasource extends ProductDatasource {
 
   @override
   Future<void> postProduct(Map<String, dynamic> product, String photoPath) async {
+
+    final String productName = product["nombre"];
     
     try {
 
       File imageFile = File(photoPath);
 
       FormData data = FormData.fromMap({
+        'ImagenCarga': MultipartFile.fromBytes(
+          imageFile.readAsBytesSync(),
+          filename: '$productName.jpg'
+        ),
         'ProductoDto': {
-          'id': product["id"],
           'nombre': product["nombre"],
           'precio': product["precio"],
           'marcaId': product["marcaId"],
           'categoriaId': product["categoriaId"],
           'codigoBarra': product["codigoBarra"],
-          'codigoQr': product["codigoQur"],
-        },
-        'ImagenCarga': MultipartFile.fromBytes(imageFile.readAsBytesSync(),
-            filename: '${product["id"]}.jpg')
+          'codigoQr': product["codigoQr"],
+        }
+    
       });
 
       final response = await dio.post(
