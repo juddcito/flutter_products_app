@@ -1,6 +1,5 @@
-import 'dart:convert';
 
-import 'package:flutter/services.dart';
+import 'dart:convert';
 
 class ProductSactiDb {
   final int id;
@@ -12,7 +11,7 @@ class ProductSactiDb {
   final String categoria;
   final String codigoBarra;
   final String codigoQr;
-  final String imagenUrl;
+  final List<int> imagenUrl;
 
   ProductSactiDb({
     required this.id,
@@ -37,7 +36,7 @@ class ProductSactiDb {
         categoria: json["categoria"],
         codigoBarra: json["codigoBarra"],
         codigoQr:json["codigoQr"],
-        imagenUrl: json["imagenurl"] ?? ''
+        imagenUrl: base64Decode(json["imagenUrl"])
       );
 
   Map<String, dynamic> toJson() => {
@@ -48,5 +47,6 @@ class ProductSactiDb {
         "marca": marca,
         "categoriaId": categoriaId,
         "categoria": categoria,
+        "imagenUrl": imagenUrl
       };
 }

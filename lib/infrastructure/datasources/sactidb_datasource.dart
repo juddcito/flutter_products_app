@@ -27,7 +27,7 @@ class SactiDbDatasource extends ProductDatasource {
 
   // Para PUT de productos
   final dio3 = Dio(BaseOptions(
-    baseUrl: 'https://nuevaprueba1.azurewebsites.net/api/productos',
+    baseUrl: 'http://192.168.0.128:6001/api/productos',
     queryParameters: {
       'ver': '1.1'
     }

@@ -11,7 +11,7 @@ class Product {
   final String categoria;
   final String codigoBarra;
   final String codigoQr;
-  final String imagenUrl;
+  final List<int> imagenUrl;
 
   Product(
     this.id,

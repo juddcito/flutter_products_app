@@ -8,7 +8,7 @@ class SearchedProduct {
     final Categoria categoria;
     final String codigoBarra;
     final String codigoQr;
-    final String imagenUrl;
+    final List<int> imagenUrl;
     
     SearchedProduct({
         required this.id,

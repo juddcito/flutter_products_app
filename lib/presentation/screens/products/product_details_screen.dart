@@ -192,7 +192,7 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 final String codigoBarra = ref.read(barcodeProvider);
                 final String codigoQr = ref.read(qrProvider);
                 final String photoPath = ref.read(productImageProvider);
-                String imagenUrl = 'no_url';
+                final imagenUrl = product.imagenUrl;
                 // Guardar la imagen
 
                 Product updatedProduct = Product(
@@ -328,15 +328,20 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+
     final categories = widget.categories;
     final marcas = widget.marcas;
     final String barcode = widget.barcode;
     final String qrcode = widget.qrCode;
     final String image = ref.watch(productImageProvider);
     late ImageProvider imageProvider;
-
-    if (image == '') {
+    
+    // Carga de imagen
+    if ( image == '' && widget.product.imagenUrl.isEmpty ) {
       imageProvider = const AssetImage('assets/loaders/no_image.png');
+    } else if ( image == '' && widget.product.imagenUrl.isNotEmpty ) {
+      Uint8List imageBytes = Uint8List.fromList(widget.product.imagenUrl);
+      imageProvider = MemoryImage(imageBytes);
     } else {
       imageProvider = FileImage(File(image));
     }

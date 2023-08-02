@@ -13,7 +13,7 @@ class ProductDetails {
     final Categoria categoria;
     final String codigoBarra;
     final String codigoQr;
-    final String imagenUrl;
+    final List<int> imagenUrl;
 
     ProductDetails({
         required this.id,
@@ -36,7 +36,7 @@ class ProductDetails {
         categoria: Categoria.fromJson(json["categoria"]),
         codigoBarra: json["codigoBarra"],
         codigoQr:json["codigoQr"],
-        imagenUrl: json["imagenurl"] ?? ''
+        imagenUrl: base64Decode(json["imagenUrl"])
     );
 
     Map<String, dynamic> toJson() => {
