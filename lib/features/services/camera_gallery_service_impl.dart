@@ -35,7 +35,7 @@ class CameraGalleryServiceImpl extends CameraGalleryService {
 
     if ( photo == null ) return null;
 
-    print('Tenemos una iamgen ${photo.path}');
+    print('Tenemos una imagen ${photo.path}');
 
     return photo.path;
 

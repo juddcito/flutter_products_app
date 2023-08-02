@@ -16,6 +16,7 @@ class CategoriesDropdown extends ConsumerStatefulWidget {
 }
 
 class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
+
   Categoryy? selectedCategory;
   bool _isMounted = true;
 
@@ -51,6 +52,7 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    
     int selectedIndex = widget.categories.indexWhere(
         (categoria) => categoria.id.toString() == widget.categoryId);
 

@@ -39,8 +39,8 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
     final colors = Theme.of(context).colorScheme;
     final categories = ref.watch(categoriesProvider);
     final marcas = ref.watch(marcasProvider);
-    String barcode = '';
-    String qrcode = '';
+    String barcodeResult = ref.watch(barcodeProvider) != '' ? '' : ref.watch(barcodeProvider) ;
+    String qrCode = ref.watch(qrProvider)  != '' ? '' : ref.watch(qrProvider) ;
 
     @override
     Map<String, dynamic> buildProduct() {
@@ -113,8 +113,8 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
       body: _ProductCreateView(
           marcas: marcas,
           categories: categories,
-          barcode: barcode,
-          qrCode: qrcode),
+          barcode: barcodeResult,
+          qrCode: qrCode),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue.shade50,
         shape: const CircleBorder(),
@@ -132,6 +132,7 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
 }
 
 class _ProductCreateView extends ConsumerStatefulWidget {
+
   final List<Categoryy> categories;
   final List<Marca> marcas;
   final String barcode;
@@ -242,7 +243,10 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
               const SizedBox(
                 height: 32,
               ),
-              QrTextfield(qrController: qrController, qrcode: widget.qrCode),
+              QrTextfield(
+                qrController: qrController,
+                qrcode: widget.qrCode
+              ),
               const SizedBox(
                 height: 32,
               ),
