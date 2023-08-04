@@ -106,9 +106,9 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
               },
               icon: const Icon(Icons.barcode_reader))
         ],
-        title: const Text('Registrar', style: TextStyle(color: Colors.black)),
-        backgroundColor: colors.background,
-        foregroundColor: Colors.black,
+        title: const Text('Registrar'),
+        backgroundColor: colors.primary,
+        foregroundColor: Colors.white,
       ),
       body: _ProductCreateView(
           marcas: marcas,

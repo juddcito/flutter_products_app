@@ -48,13 +48,6 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     ref.read(marcasProvider.notifier).loadMarcas();
   }
 
-  Future<Uint8List> testCompressFile(File file) async {
-    var result = await FlutterImageCompress.compressWithFile(file.absolute.path,
-        minWidth: 2300, minHeight: 1500, quality: 94, rotate: 90);
-
-    return result!;
-  }
-
   void uploadPhoto(Product product, String photoPath) async {
     
     File imageFile = File(photoPath);
@@ -95,6 +88,8 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
+    final colors = Theme.of(context).colorScheme;
     final Product? product = ref.watch(productInfoProvider)[widget.productId];
     final categories = ref.watch(categoriesProvider);
     final marcas = ref.watch(marcasProvider);
@@ -104,8 +99,8 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     if (product == null) {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          backgroundColor: colors.primary,
+          foregroundColor: Colors.white,
           title: const Text('Detalles'),
         ),
         body: const Center(child: CircularProgressIndicator()),
@@ -155,10 +150,10 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           ],
           title: const Text(
             'Detalles',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          backgroundColor: colors.primary,
+          foregroundColor: Colors.white,
         ),
         body: FadeInLeft(
           child: _ProductDetailsView(
@@ -207,12 +202,8 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     codigoQr,
                     imagenUrl);
 
-                // Subimos la foto
-                //uploadPhoto(updatedProduct, photoPath);
-
                 await ref.read(productsProvider.notifier).updateProductByProduct(updatedProduct, photoPath);
                 await ref.read(productInfoProvider.notifier).loadProduct(updatedProduct.id.toString());
-                // Reestablecer los providers
 
                 ref.read(productImageProvider.notifier).update((state) => '');
 
@@ -279,7 +270,7 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
 
   Future<void> setProductDetails() async {
     if (_isMounted) {
-      return Future.delayed(const Duration(milliseconds: 700), () {
+      return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(productNameProvider.notifier).state = widget.product.nombre;
         ref.read(productPriceProvider.notifier).state = widget.product.precio;
         ref.read(selectedCategoriaProvider.notifier).state =
@@ -352,10 +343,10 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
           child: ListView(
             padding: const EdgeInsets.all(8),
             children: [
-              SizedBox(
-                height: 300,
-                child: Padding(
-                  padding: const EdgeInsets.all(1.0),
+              Padding(
+                padding: const EdgeInsets.all(1.0),
+                child: AspectRatio(
+                  aspectRatio: 1.0,
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: Image(

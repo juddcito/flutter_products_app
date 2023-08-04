@@ -41,7 +41,7 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
     }
 
     if (_isMounted && selectedCategory != null) {
-      return Future.delayed(const Duration(milliseconds: 700), () {
+      return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(selectedCategoriaProvider.notifier).state =
             selectedCategory!.nombre;
         ref.read(selectedIdCategoriaProvider.notifier).state =

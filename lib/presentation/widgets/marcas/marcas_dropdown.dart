@@ -39,7 +39,7 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
     }
 
     if (_isMounted && selectedMarca != null) {
-      return Future.delayed(const Duration(milliseconds: 700), () {
+      return Future.delayed(const Duration(milliseconds: 300), () {
         ref.read(selectedMarcaProvider.notifier).state = selectedMarca!.nombre;
         ref.read(selectedIdMarcaProvider.notifier).state = selectedMarca!.id;
       });

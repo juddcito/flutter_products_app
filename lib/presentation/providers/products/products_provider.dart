@@ -1,7 +1,3 @@
-import 'dart:ffi';
-
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_products_app/domain/repositories/products_repository.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,7 +71,7 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
     await updateProduct(product, photoPath);
     final int productIndex = state.indexWhere((p) => p.id == product.id);
 
-    if ( productIndex != 1 ){
+    if ( productIndex != -1 ){
       state = state.map((p) => p.id == product.id ? product : p)
       .toList();
     }

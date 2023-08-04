@@ -1,51 +1,68 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_products_app/presentation/providers/products/product_info_provider.dart';
+import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../domain/entities/product.dart';
 
-class ProductItem extends StatelessWidget {
+class ProductItem extends ConsumerStatefulWidget {
+  
   final Product product;
 
   const ProductItem({super.key, required this.product});
 
   @override
+  _ProductItemState createState() => _ProductItemState();
+}
+
+class _ProductItemState extends ConsumerState<ProductItem> {
+
+  @override
   Widget build(BuildContext context) {
+
     final colors = Theme.of(context).colorScheme;
     final textStyle = Theme.of(context).textTheme;
+    late ImageProvider imageProvider;
+
+    if ( widget.product.imagenUrl.isNotEmpty ) {
+      Uint8List imageBytes = Uint8List.fromList(widget.product.imagenUrl);
+      imageProvider = MemoryImage(imageBytes);
+    } else { 
+      imageProvider = const AssetImage('assets/loaders/no_image.png');
+    }
 
     return GestureDetector(
       onTap: (){
-        context.go('/product/${ product.id }');
+        context.go('/product/${ widget.product.id }');
       },
       child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            color: Colors.grey.shade200, borderRadius: BorderRadius.circular(15)),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(
-              Icons.no_photography_outlined,
-              size: 54,
-            ),
-            Container(
-              padding: const EdgeInsets.all(4),
-              child: Text(
-                product.nombre,
-                style: textStyle.titleMedium,
-                maxLines: 2,
+            Expanded(
+              child: Container(
+                alignment: Alignment.center,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(product.marca),
-                  Text('\$' + product.precio.toString())
-                ],
-              ),
-            )
+            const SizedBox(height: 8,),
+            Text(
+              widget.product.nombre,
+              style: textStyle.titleMedium,
+              maxLines: 2,
+            ),
+            Text(widget.product.marca),
+            Text('\$${widget.product.precio}')
           ],
         ),
       ),

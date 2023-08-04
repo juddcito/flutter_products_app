@@ -4,18 +4,33 @@ import 'package:flutter_products_app/domain/entities/product.dart';
 import 'package:flutter_products_app/presentation/delegates/search_product_delegate.dart';
 import 'package:flutter_products_app/presentation/providers/products/products_provider.dart';
 import 'package:flutter_products_app/presentation/providers/search/search_products_provider.dart';
+import 'package:flutter_products_app/presentation/screens/print/print_screen.dart';
 import 'package:flutter_products_app/presentation/widgets/products/product_item.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends ConsumerWidget {
 
   static const name = 'home-screen';
 
-  const HomeScreen({super.key});
+  // List para imprimir ejemplo de ticket
+  final List<Map<String, dynamic>> data = [
+    {'Producto': 'Gibshon Slash Guitar', 'Precio':5, 'Cantidad': 2},
+    {'Producto': 'Open Box Guitar', 'Precio': 2, 'Cantidad': 4},
+    {'Producto': 'Williams Overture Piano', 'Precio': 8, 'Cantidad': 6},
+    {'Producto': 'Williams Overture Piano', 'Precio': 8, 'Cantidad': 6},
+    {'Producto': 'Williams Overture Piano', 'Precio': 8, 'Cantidad': 6},
+    {'Producto': 'Williams Overture Piano', 'Precio': 8, 'Cantidad': 6},
+  ];
+
+  final f = NumberFormat("\$###,###.00", "en_US");
+
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
+
     final colors = Theme.of(context).colorScheme;
     final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -25,11 +40,20 @@ class HomeScreen extends ConsumerWidget {
         centerTitle: true,
         actions: [
           IconButton(
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PrintScreen(data)
+              ),
+              );
+            },
+            icon: const Icon( Icons.print )
+          ),
+          IconButton(
             onPressed: ()  {
-
               final searchedProducts = ref.read( searchedProductProvider );
-              final searchQuery = ref.read(searchQueryProvider);
-            
+              final searchQuery = ref.read(searchQueryProvider);  
               showSearch<Product?>(
                 query: searchQuery,
                 context: context,
@@ -41,15 +65,13 @@ class HomeScreen extends ConsumerWidget {
                 if ( product == null ) return;
                 context.push('/product/${product.id}');
               });
-
             },
             icon: const Icon( Icons.search ))
         ],
-        foregroundColor: Colors.black,
-        backgroundColor: colors.background,
+        foregroundColor: Colors.white,
+        backgroundColor: colors.primary,
         title: const Text(
           'Productos',
-          style: TextStyle(color: Colors.black),
         ),
       ),
       body: Padding(
@@ -137,7 +159,11 @@ class _ProductsSlideshowState extends State<ProductsSlideshow> {
     return GridView.builder(
         controller: scrollController,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, crossAxisSpacing: 8, mainAxisSpacing: 10),
+            crossAxisCount: 2,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.55
+        ),
         itemCount: widget.products.length,
         itemBuilder: (context, index) {
           final product = widget.products[index];

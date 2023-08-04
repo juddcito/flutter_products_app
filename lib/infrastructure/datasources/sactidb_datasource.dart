@@ -17,17 +17,17 @@ import '../../domain/entities/marca.dart';
 class SactiDbDatasource extends ProductDatasource {
   // Para POST de productos
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:6001/api/productos',
+    baseUrl: 'http://192.168.0.128:120/api/productos',
   ));
 
   // Para consultar marcas y categorías
   final dio2 = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:6001/api',
+    baseUrl: 'http://192.168.0.128:120/api',
   ));
 
   // Para PUT de productos
   final dio3 = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:6001/api/productos',
+    baseUrl: 'http://192.168.0.128:120/api/productos',
     queryParameters: {
       'ver': '1.1'
     }
@@ -115,7 +115,6 @@ class SactiDbDatasource extends ProductDatasource {
     File imageFile = File(photoPath);
 
     try {
-
         FormData data = FormData.fromMap({
           'ProductoDto': {
           'id': product.id,
