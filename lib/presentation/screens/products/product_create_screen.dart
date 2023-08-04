@@ -205,7 +205,7 @@ class __ProductCreateViewState extends ConsumerState<_ProductCreateView> {
                       borderRadius: BorderRadius.circular(20),
                       child: Image(
                         image: imageProvider,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                       )),
                 ),
               ),

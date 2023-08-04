@@ -2,4 +2,4 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final qrProvider = StateProvider<String>((ref) => '');
+final qrProvider = StateProvider<String>((ref) => 'no_qr');

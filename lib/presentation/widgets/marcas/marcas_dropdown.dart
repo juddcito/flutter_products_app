@@ -48,13 +48,6 @@ class _MarcasDropdownState extends ConsumerState<MarcasDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    
-    int selectedIndex = widget.marcas
-        .indexWhere((marca) => marca.id.toString() == widget.marcaId);
-
-    if (selectedIndex != -1) {
-      selectedMarca = widget.marcas[selectedIndex];
-    }
 
     final textStyle = Theme.of(context).textTheme.labelLarge;
 

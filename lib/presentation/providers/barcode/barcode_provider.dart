@@ -2,4 +2,4 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final barcodeProvider = StateProvider<String>((ref) => '');
+final barcodeProvider = StateProvider<String>((ref) => 'no_barcode');

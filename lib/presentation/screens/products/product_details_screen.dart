@@ -176,19 +176,27 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               child: const Icon(Icons.save),
               label: 'Guardar',
               onTap: () async {
+
                 final String productName = ref.read(productNameProvider);
                 final double productPrice = ref.read(productPriceProvider);
-                final String? selectedCategory =
-                    ref.read(selectedCategoriaProvider);
-                final int? selectedIdCategory =
-                    ref.read(selectedIdCategoriaProvider);
+                final String? selectedCategory = ref.read(selectedCategoriaProvider);
+                final int? selectedIdCategory = ref.read(selectedIdCategoriaProvider);
                 final String? selectedMarca = ref.read(selectedMarcaProvider);
                 final int? selectedIdMarca = ref.read(selectedIdMarcaProvider);
                 final String codigoBarra = ref.read(barcodeProvider);
                 final String codigoQr = ref.read(qrProvider);
                 final String photoPath = ref.read(productImageProvider);
-                final imagenUrl = product.imagenUrl;
-                // Guardar la imagen
+
+                final Uint8List imagenUrl;
+
+                if (photoPath.isEmpty && product.imagenUrl.isEmpty){
+                   imagenUrl = Uint8List.fromList([]);
+                } else if (photoPath.isEmpty && product.imagenUrl.isNotEmpty) {
+                   imagenUrl = Uint8List.fromList(product.imagenUrl);
+                } else {
+                  File imagen = File(photoPath);
+                   imagenUrl = await imagen.readAsBytes();
+                }
 
                 Product updatedProduct = Product(
                     product.id,
@@ -200,12 +208,13 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     selectedCategory!,
                     codigoBarra,
                     codigoQr,
-                    imagenUrl);
+                    imagenUrl
+                  );
 
                 await ref.read(productsProvider.notifier).updateProductByProduct(updatedProduct, photoPath);
                 await ref.read(productInfoProvider.notifier).loadProduct(updatedProduct.id.toString());
 
-                ref.read(productImageProvider.notifier).update((state) => '');
+                await ref.read(productImageProvider.notifier).update((state) => '');
 
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Producto guardado correctamente.')));
@@ -213,15 +222,14 @@ class ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             ),
             SpeedDialChild(
                 onTap: () async {
-                  await ref
-                      .read(productsProvider.notifier)
-                      .deleteProductById(widget.productId);
+                  await ref.read(productsProvider.notifier).deleteProductById(widget.productId);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Producto eliminado correctamente.')),
                   );
                   ref.read(barcodeProvider.notifier).update((state) => '');
                   ref.read(qrProvider.notifier).update((state) => '');
+                  ref.read(productImageProvider.notifier).update((state) => '');
                   context.pop();
                 },
                 backgroundColor: Colors.red.shade50,
@@ -351,7 +359,7 @@ class _ProductDetailsViewState extends ConsumerState<_ProductDetailsView> {
                       borderRadius: BorderRadius.circular(20),
                       child: Image(
                         image: imageProvider,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                       )),
                 ),
               ),

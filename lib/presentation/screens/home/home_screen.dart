@@ -19,9 +19,9 @@ class HomeScreen extends ConsumerWidget {
     {'Producto': 'Gibshon Slash Guitar', 'Precio':5, 'Cantidad': 2},
     {'Producto': 'Open Box Guitar', 'Precio': 2, 'Cantidad': 4},
     {'Producto': 'Williams Overture Piano', 'Precio': 8, 'Cantidad': 6},
-    {'Producto': 'Williams Overture Piano', 'Precio': 8, 'Cantidad': 6},
-    {'Producto': 'Williams Overture Piano', 'Precio': 8, 'Cantidad': 6},
-    {'Producto': 'Williams Overture Piano', 'Precio': 8, 'Cantidad': 6},
+    {'Producto': 'Williams Overture Piano', 'Precio': 5, 'Cantidad': 3},
+    {'Producto': 'Williams Overture Piano', 'Precio': 4, 'Cantidad': 2},
+    {'Producto': 'Williams Overture Piano', 'Precio': 3, 'Cantidad': 1},
   ];
 
   final f = NumberFormat("\$###,###.00", "en_US");

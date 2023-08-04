@@ -1,7 +1,6 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_products_app/domain/datasources/products_datasource.dart';
 import 'package:flutter_products_app/domain/entities/product.dart';
 import 'package:flutter_products_app/infrastructure/mappers/product_mapper.dart';
@@ -15,22 +14,24 @@ import 'package:flutter_products_app/infrastructure/models/sactidb/searched_prod
 import '../../domain/entities/marca.dart';
 
 class SactiDbDatasource extends ProductDatasource {
-  // Para POST de productos
+  // Para GET de productos
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:120/api/productos',
+    baseUrl: 'http://192.168.0.128:6001/api/productos',
   ));
 
-  // Para consultar marcas y categorías
+  // Para GET de marcas y categorías
   final dio2 = Dio(BaseOptions(
     baseUrl: 'http://192.168.0.128:120/api',
   ));
 
   // Para PUT de productos
   final dio3 = Dio(BaseOptions(
-    baseUrl: 'http://192.168.0.128:120/api/productos',
-    queryParameters: {
-      'ver': '1.1'
-    }
+      baseUrl: 'http://192.168.0.128:120/api/productos',
+      queryParameters: {'ver': '1.1'}));
+
+  // Para POST de productos
+  final dio4 = Dio(BaseOptions(
+    baseUrl: 'http://192.168.0.128:6001/api/productos/prod',
   ));
 
   @override
@@ -111,12 +112,21 @@ class SactiDbDatasource extends ProductDatasource {
   // /api/productos/$idProducto
   @override
   Future<void> updateProduct(Product product, String photoPath) async {
+    Uint8List imageBytes;
 
-    File imageFile = File(photoPath);
+    if (photoPath == "" && product.imagenUrl.isEmpty) {
+      ByteData defaultImageBytes =
+          await rootBundle.load('assets/loaders/no_image.png');
+      imageBytes = defaultImageBytes.buffer.asUint8List();
+    } else if (photoPath == "" && product.imagenUrl.isNotEmpty) {
+      imageBytes = Uint8List.fromList(product.imagenUrl);
+    } else {
+      imageBytes = File(photoPath).readAsBytesSync();
+    }
 
     try {
-        FormData data = FormData.fromMap({
-          'ProductoDto': {
+      FormData data = FormData.fromMap({
+        'ProductoDto': {
           'id': product.id,
           'nombre': product.nombre,
           'precio': product.precio,
@@ -125,17 +135,12 @@ class SactiDbDatasource extends ProductDatasource {
           'codigoBarra': product.codigoBarra,
           'codigoQr': product.codigoQr,
         },
-        'ImagenCarga': MultipartFile.fromBytes(
-          imageFile.readAsBytesSync(),
-          filename: '${product.id}.jpg'
-        )
+        'ImagenCarga':
+            MultipartFile.fromBytes(imageBytes, filename: '${product.id}.jpg')
       });
 
-      final response = await dio3.put(
-        '',
-        data: data,
-        options: Options(contentType: 'multipart/form-data')
-      );
+      final response = await dio3.put('',
+          data: data, options: Options(contentType: 'multipart/form-data'));
       print(response);
 
       if (response.statusCode == 200) {
@@ -150,18 +155,20 @@ class SactiDbDatasource extends ProductDatasource {
 
   @override
   Future<void> postProduct(Map<String, dynamic> product, String photoPath) async {
-
     final String productName = product["nombre"];
-    
+    FormData data;
+    File imageFile = File('');
+    final dynamic response;
+
     try {
+      if (photoPath.isNotEmpty) {
+        imageFile = File(photoPath);
+      }
 
-      File imageFile = File(photoPath);
-
-      FormData data = FormData.fromMap({
-        'ImagenCarga': MultipartFile.fromBytes(
-          imageFile.readAsBytesSync(),
-          filename: '$productName.jpg'
-        ),
+      data = FormData.fromMap({
+        if (photoPath != '')
+          'ImagenCarga': MultipartFile.fromBytes(imageFile.readAsBytesSync(),
+              filename: '$productName.jpg'),
         'ProductoDto': {
           'nombre': product["nombre"],
           'precio': product["precio"],
@@ -170,16 +177,15 @@ class SactiDbDatasource extends ProductDatasource {
           'codigoBarra': product["codigoBarra"],
           'codigoQr': product["codigoQr"],
         }
-    
       });
 
-      final response = await dio.post(
-        '',
-        data: data,
-        options: Options(
-          contentType: 'multipart/form-data'
-        )
-      );
+      if (photoPath.isEmpty) {
+         response = await dio4.post('',
+            data: data, options: Options(contentType: 'multipart/form-data'));
+      } else {
+         response = await dio.post('',
+            data: data, options: Options(contentType: 'multipart/form-data'));
+      }
 
       if (response.statusCode == 201) {
         print('Petición POST exitosa: ${response.data}');

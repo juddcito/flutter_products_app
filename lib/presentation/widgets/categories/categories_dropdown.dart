@@ -52,13 +52,6 @@ class CategoriesDropdownState extends ConsumerState<CategoriesDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    
-    int selectedIndex = widget.categories.indexWhere(
-        (categoria) => categoria.id.toString() == widget.categoryId);
-
-    if (selectedIndex != -1) {
-      selectedCategory = widget.categories[selectedIndex];
-    }
 
     final textStyle = Theme.of(context).textTheme.labelLarge;
 
