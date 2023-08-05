@@ -36,11 +36,12 @@ class ProductScreenState extends ConsumerState<ProductCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     final colors = Theme.of(context).colorScheme;
     final categories = ref.watch(categoriesProvider);
     final marcas = ref.watch(marcasProvider);
-    String barcodeResult = ref.watch(barcodeProvider) != '' ? '' : ref.watch(barcodeProvider) ;
-    String qrCode = ref.watch(qrProvider)  != '' ? '' : ref.watch(qrProvider) ;
+    String barcodeResult = ref.watch(barcodeProvider);
+    String qrCode = ref.watch(qrProvider);
 
     @override
     Map<String, dynamic> buildProduct() {

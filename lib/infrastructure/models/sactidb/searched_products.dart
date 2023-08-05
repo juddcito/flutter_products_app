@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 class SearchedProduct {
     final int id;
     final String nombre;
@@ -31,7 +33,7 @@ class SearchedProduct {
         categoria: Categoria.fromJson(json["categoria"]),
         codigoBarra: json["codigoBarra"],
         codigoQr:json["codigoQr"],
-        imagenUrl: json["imagenUrl"]
+        imagenUrl: base64Decode(json["imagenUrl"])
     );
 
     Map<String, dynamic> toJson() => {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
@@ -95,8 +96,17 @@ class _ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final textStyles = Theme.of(context).textTheme;
     final size = MediaQuery.of(context).size;
+    late ImageProvider imageProvider;
+
+    if (product.imagenUrl.isEmpty){
+      imageProvider = const AssetImage('assets/loaders/no_image.png');
+    } else {
+      Uint8List imageBytes = Uint8List.fromList(product.imagenUrl);
+      imageProvider = MemoryImage(imageBytes);
+    }
 
     return GestureDetector(
       onTap: () {
@@ -112,10 +122,9 @@ class _ProductItem extends StatelessWidget {
               width: size.width * 0.2,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: const Icon(
-                  Icons.image,
-                  size: 64,
-                ),
+                child: Image(
+                  image: imageProvider,
+                  fit: BoxFit.cover,)
               ),
             ),
 
